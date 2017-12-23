@@ -16,10 +16,10 @@ def upgrade(module, helper):
 
     cmd = helper_cmd[helper] + ['-u']
 
-    rc, stdout, stderr = module.run_command(cmd, check_rc=True)
+    rc, out, err = module.run_command(cmd, check_rc=True)
 
     module.exit_json(
-        changed=not (stdout == '' or 'there is nothing to do' in stdout or 'No AUR update found' in stdout),
+        changed=not (out == '' or 'there is nothing to do' in out or 'No AUR update found' in out),
         msg='upgraded system',
     )
 
@@ -32,10 +32,10 @@ def install_packages(module, package_name, helper):
     if upgrade:
         cmd += ['-u']
 
-    rc, stdout, stderr = module.run_command(cmd, check_rc=True)
+    rc, out, err = module.run_command(cmd, check_rc=True)
 
     module.exit_json(
-        changed=not (stdout == '' or '-- skipping' in stdout),
+        changed=not (out == '' or '-- skipping' in out),
         msg='installed package',
     )
 
