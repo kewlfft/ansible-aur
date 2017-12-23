@@ -1,6 +1,4 @@
-*ansible-aur* is an Ansible module to use some AUR helpers.
-
-The following AUR helpers are supported:
+*ansible-aur* is an Ansible module to use some AUR helpers. The following helpers are supported:
 
 - pacaur (default)
 - trizen
@@ -8,9 +6,9 @@ The following AUR helpers are supported:
 - yay
 
 > Notes:
-> * It is recommended to use the official *pacman* module for removals or for upgrades with the repositories, this module focuses on the AUR,
-> * Searches are limited to the AUR using the *--aur* parameter except for *yay* and *yaourt* which do not support it and also search the repositories,
-> * A package is reinstalled only if an update is available using the *--needed* parameter except for *yay* which do not support it and reinstalls systematically,
+> * It is recommended to use the official *pacman* module for removals or for upgrades with the repositories, this module aims to cover the AUR,
+> * Searches are limited to the AUR using the *--aur* parameter except for *yay* and *yaourt* which do not support it and systematically search the repositories,
+> * A package is reinstalled only if an update is available using the *--needed* parameter except for *yay* which do not support it and systematically reinstalls,
 
 ## Options
 |parameter|required |default |choices                     |comments|
