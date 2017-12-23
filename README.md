@@ -1,9 +1,9 @@
 # Ansible AUR package manager
 Ansible module to use some AUR helpers. The following helpers are supported:
-- pacaur (default)
-- trizen
-- yaourt
-- yay
+- [pacaur](https://github.com/rmarquis/pacaur) (default)
+- [trizen](https://github.com/trizen/trizen)
+- [yaourt](https://github.com/archlinuxfr/yaourt)
+- [yay](https://github.com/Jguer/yay)
 
 > Notes:
 > * It is recommended to use the official *pacman* module for removals or for upgrades with the repositories, this module aims to cover the AUR,
