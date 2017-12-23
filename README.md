@@ -18,13 +18,13 @@ Either *name* or *upgrade* is required, both can not be used together.
 ## Installing
 1. Add as a submodule in your playbook:
   ```
-  mkdir -p library/external_modules
+  mkdir --parents library/external_modules
   git submodule add git://github.com/kewlfft/ansible-aur.git library/external_modules/ansible-aur
   ```
 
-2. Link the binary to the base of `library/`:
+2. Link the script to the base of `library/`:
   ```
-  ln -s external_modules/ansible-aur/aur library/aur
+  ln --symbolic external_modules/ansible-aur/aur.py library/aur
   ```
 
 ## Usage
