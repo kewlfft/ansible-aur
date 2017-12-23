@@ -17,7 +17,7 @@
 |upgrade  |no       |no      |yes, no                     |Whether or not to upgrade whole system.|
 |helper   |no       |pacaur  |pacaur, trizen, yaourt, yay |Helper to use.|
 
-> Note: Either *name* or *upgrade* is required, both can not be used together, this is prevented to allow a meaningful *changed* output.
+> Note: Either *name* or *upgrade* is required, both can not be used together.
 
 ## Usage
 1. Add as a submodule in your playbook:
