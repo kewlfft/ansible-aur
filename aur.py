@@ -24,18 +24,18 @@ def upgrade(module, helper):
     )
 
 
-def install_packages(module, package_name, helper):
+def install_packages(module, packages, helper):
     assert helper in helper_cmd
 
-    cmd = helper_cmd[helper] + [package_name]
+    changed_iter = False
+    for package in packages:
+        cmd = helper_cmd[helper] + [package]
 
-    if upgrade:
-        cmd += ['-u']
-
-    rc, out, err = module.run_command(cmd, check_rc=True)
+        rc, out, err = module.run_command(cmd, check_rc=True)
+        changed_iter = changed_iter or not (out == '' or '-- skipping' in out)
 
     module.exit_json(
-        changed=not (out == '' or '-- skipping' in out),
+        changed=changed_iter,
         msg='installed package',
     )
 
@@ -44,7 +44,7 @@ def main():
     module = AnsibleModule(
         argument_spec={
             'name': {
-                'required': False,
+                'type': 'list',
             },
             'upgrade': {
                 'default': False,
