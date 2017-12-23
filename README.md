@@ -1,5 +1,5 @@
-*ansible-aur* is an Ansible module to use some AUR helpers. The following helpers are supported:
-
+# ansible-aur
+Ansible module to use some AUR helpers. The following helpers are supported:
 - pacaur (default)
 - trizen
 - yaourt
@@ -19,7 +19,7 @@
 
 > Note: Either *name* or *upgrade* is required, both can not be used together.
 
-## Usage
+## Installing
 1. Add as a submodule in your playbook:
   ```
   mkdir -p library/external_modules
@@ -31,7 +31,8 @@
   ln -s external_modules/ansible-aur/aur library/aur
   ```
 
-3. Use it in a task, as in the following examples:
+## Usage
+Use it in a task, as in the following examples:
   ```
   # Install (using pacaur)
   - aur: name=package_name
