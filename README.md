@@ -15,11 +15,6 @@ Ansible module to use some AUR helpers. The following helpers are supported:
 ### Note
 Either *name* or *upgrade* is required, both can not be used together.
 
-### Warning
-* It is recommended to use the official *pacman* module for removals or for upgrades with the repositories, this module aims to cover the AUR,
-* Searches are limited to the AUR using the *--aur* parameter except for *yay* and *yaourt* which do not support it and systematically search the repositories,
-* A package is reinstalled only if an update is available using the *--needed* parameter except for *yay* which do not support it and systematically reinstalls,
-
 ## Installing
 1. Add as a submodule in your playbook:
   ```
@@ -33,6 +28,12 @@ Either *name* or *upgrade* is required, both can not be used together.
   ```
 
 ## Usage
+### Warning
+* It is recommended to use the official *pacman* module for removals or for upgrades with the repositories, this module aims to cover the AUR,
+* Searches are limited to the AUR using the *--aur* parameter except for *yay* and *yaourt* which do not support it and systematically search the repositories,
+* A package is reinstalled only if an update is available using the *--needed* parameter except for *yay* which do not support it and systematically reinstalls,
+
+### Examples
 Use it in a task, as in the following examples:
   ```
   # Install (using pacaur)
