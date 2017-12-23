@@ -1,4 +1,4 @@
-# ansible-aur
+# Ansible AUR
 Ansible module to use some AUR helpers. The following helpers are supported:
 - pacaur (default)
 - trizen
