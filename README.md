@@ -16,15 +16,15 @@ Ansible module to use some AUR helpers. The following helpers are supported:
 Either *name* or *upgrade* is required, both can not be used together.
 
 ## Installing
-1. Add as a submodule in your playbook:
+1. Add as a custom module in your playbook:
   ```
-  mkdir --parents library/external_modules
-  git submodule add git://github.com/kewlfft/ansible-aur.git library/external_modules/ansible-aur
+  mkdir --parents library
+  git submodule add git://github.com/kewlfft/ansible-aur.git library/ansible-aur
   ```
 
 2. Link the script to the base of `library/`:
   ```
-  ln --symbolic external_modules/ansible-aur/aur.py library/aur
+  ln --symbolic library/ansible-aur/aur.py library/aur
   ```
 
 ## Usage
