@@ -1,5 +1,5 @@
 # Ansible AUR package manager
-Ansible module to use some AUR helpers. The following helpers are supported and automatically selected following the below order:
+Ansible module to use some AUR helpers. The following helpers are supported and automatically selected according to the below order:
 - [pacaur](https://github.com/rmarquis/pacaur)
 - [trizen](https://github.com/trizen/trizen)
 - [yaourt](https://github.com/archlinuxfr/yaourt)
