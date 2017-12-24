@@ -6,11 +6,11 @@ Ansible module to use some AUR helpers. The following helpers are supported:
 - [yay](https://github.com/Jguer/yay)
 
 ## Options
-|parameter|required |default |choices                     |comments|
-|---      |---      |---     |---                         |---|
-|name     |no       |        |                            |Name or list of names of the package(s) to install or upgrade.|
-|upgrade  |no       |no      |yes, no                     |Whether or not to upgrade whole system.|
-|helper   |no       |pacaur  |pacaur, trizen, yaourt, yay |Helper to use.|
+|parameter|required |default |choices                           |comments|
+|---      |---      |---     |---                               |---|
+|name     |no       |        |                                  |Name or list of names of the package(s) to install or upgrade.|
+|upgrade  |no       |no      |yes, no                           |Whether or not to upgrade whole system.|
+|use      |no       |auto    |auto, pacaur, trizen, yaourt, yay |The helper to use, 'auto' uses the first helper found in the list.|
 
 ### Note
 Either *name* or *upgrade* is required, both can not be used together.
@@ -43,7 +43,7 @@ Use it in a task, as in the following examples:
 
   # Install (using trizen)
   - aur:
-      helper: trizen
+      use: trizen
       name:
         - package_name_1
         - package_name_2 
