@@ -16,7 +16,7 @@ Ansible module to use some AUR helpers. The following helpers are supported and 
 Either *name* or *upgrade* is required, both can not be used together.
 
 ## Installing
-1. Clone the ansibe-aur repository in your playbook custom module directory:
+1. Clone the *ansibe-aur* repository in your playbook custom module directory:
   ```
   mkdir --parents library
   git clone git@github.com:kewlfft/ansible-aur.git library/ansible-aur
