@@ -23,9 +23,9 @@ git clone git@github.com:kewlfft/ansible-aur.git library/ansible-aur
 ```
 
 2. Link the script to `library/aur`:
-  ```
-  ln --symbolic library/ansible-aur/aur.py library/aur
-  ```
+```
+ln --symbolic library/ansible-aur/aur.py library/aur
+```
 
 ## Usage
 ### Warning
@@ -35,21 +35,21 @@ git clone git@github.com:kewlfft/ansible-aur.git library/ansible-aur
 
 ### Examples
 Use it in a task, as in the following examples:
-  ```
-  # Install (using pacaur)
-  - aur: name=package_name
-    become: yes
-    become_user: user_that_has_nopasswd_in_sudoers_for_pacman_use
+```
+# Install (using pacaur)
+- aur: name=package_name
+  become: yes
+  become_user: user_that_has_nopasswd_in_sudoers_for_pacman_use
 
-  # Install (using trizen)
-  - aur:
-      use: trizen
-      name:
-        - package_name_1
-        - package_name_2 
-    [...]
+# Install (using trizen)
+- aur:
+    use: trizen
+    name:
+      - package_name_1
+      - package_name_2 
+  [...]
 
-  # Upgrade (using pacaur)
-  - aur: upgrade=yes
-    [...]
-  ```
+# Upgrade (using pacaur)
+- aur: upgrade=yes
+  [...]
+```
