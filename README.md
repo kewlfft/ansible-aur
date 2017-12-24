@@ -16,22 +16,22 @@ Ansible module to use some AUR helpers. The following helpers are supported and 
 Either *name* or *upgrade* is required, both can not be used together.
 
 ## Installing
-1. Clone the *ansibe-aur* repository in your playbook custom module directory:
-  ```
-  mkdir --parents library
-  git clone git@github.com:kewlfft/ansible-aur.git library/ansible-aur
-  ```
+1. Clone the *ansibe-aur* repository in your playbook custom-module directory:
+```
+mkdir --parents library
+git clone git@github.com:kewlfft/ansible-aur.git library/ansible-aur
+```
 
-2. Link the script to the base of `library/`:
+2. Link the script to `library/aur`:
   ```
   ln --symbolic library/ansible-aur/aur.py library/aur
   ```
 
 ## Usage
 ### Warning
-* It is recommended to use the official *pacman* module for removals or for upgrades with the repositories, this module aims to cover the AUR,
-* Searches are limited to the AUR using the *--aur* parameter except for *yay* and *yaourt* which do not support it and systematically search the repositories,
-* A package is reinstalled only if an update is available using the *--needed* parameter except for *yay* which do not support it and systematically reinstalls,
+* It is recommended to use the official *pacman* module for removal or for system upgrade with the repositories, this module aims to cover the AUR,
+* Searches are limited to the AUR using the *--aur* parameter, except for *yay* and *yaourt* which do not support it and systematically search the repositories,
+* A package is reinstalled only if an update is available using the *--needed* parameter, except for *yay* which do not support it and systematically reinstalls,
 
 ### Examples
 Use it in a task, as in the following examples:
