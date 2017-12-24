@@ -21,6 +21,7 @@ def upgrade(module, use):
     module.exit_json(
         changed=not (out == '' or 'there is nothing to do' in out or 'No AUR updates found' in out),
         msg='upgraded system',
+        helper_used=use,
     )
 
 
@@ -37,6 +38,7 @@ def install_packages(module, packages, use):
     module.exit_json(
         changed=changed_iter,
         msg='installed package',
+        helper_used=use,
     )
 
 
