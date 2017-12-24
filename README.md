@@ -19,12 +19,13 @@ Either *name* or *upgrade* is required, both can not be used together.
 1. Clone the *ansibe-aur* repository in your playbook custom-module directory:
 ```
 mkdir --parents library
-git clone git@github.com:kewlfft/ansible-aur.git library/ansible-aur
+cd library
+git clone git@github.com:kewlfft/ansible-aur.git
 ```
 
 2. Link the script to `library/aur`:
 ```
-ln --symbolic library/ansible-aur/aur.py library/aur
+ln --symbolic ansible-aur/aur.py aur
 ```
 
 ## Usage
