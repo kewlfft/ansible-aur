@@ -10,7 +10,7 @@ Ansible module to use some AUR helpers. The following helpers are supported and 
 |---      |---      |---     |---                               |---|
 |name     |no       |        |                                  |Name or list of names of the package(s) to install or upgrade.|
 |upgrade  |no       |no      |yes, no                           |Whether or not to upgrade whole system.|
-|use      |no       |auto    |auto, pacaur, trizen, yaourt, yay |The helper to use, 'auto' uses the first helper found in the list.|
+|use      |no       |auto    |auto, pacaur, trizen, yaourt, yay |The helper to use, 'auto' uses the first known helper found.|
 
 ### Note
 Either *name* or *upgrade* is required, both can not be used together.
@@ -36,7 +36,7 @@ ln --symbolic library/ansible-aur/aur.py library/aur
 ### Examples
 Use it in a task, as in the following examples:
 ```
-# Install (using pacaur)
+# Install (using the first known helper found)
 - aur: name=package_name
   become: yes
   become_user: user_that_has_nopasswd_in_sudoers_for_pacman_use
@@ -50,6 +50,6 @@ Use it in a task, as in the following examples:
   [...]
 
 # Upgrade (using pacaur)
-- aur: upgrade=yes
+- aur: upgrade=yes use=pacaur
   [...]
 ```
