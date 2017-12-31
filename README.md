@@ -30,19 +30,19 @@ ln --symbolic ansible-aur/aur.py aur
 
 ## Usage
 ### Warning
-* It is recommended to use the official *pacman* module for removal or for system upgrade with the repositories, this module aims to cover the AUR,
-* Searches are limited to the AUR using the *--aur* parameter, except for *yay* and *yaourt* which do not support it and systematically search the repositories,
-* A package is reinstalled only if an update is available using the *--needed* parameter, except for *yay* which do not support it and systematically reinstalls,
+* It is recommended to use the official *pacman* module for removal or for system upgrade with the repositories, this module aims to cover the AUR.
+* Searches are limited to the AUR, using the *--aur* parameter, except for *yay* and *yaourt* which do not support it and systematically search the repositories.
+* A package is reinstalled only if an update is available, using the *--needed* parameter, except for *yay* which does not support it and systematically reinstalls.
 
 ### Examples
 Use it in a task, as in the following examples:
 ```
-# Install (using the first known helper found)
+# Install - using the first known helper found
 - aur: name=package_name
   become: yes
   become_user: user_that_has_nopasswd_in_sudoers_for_pacman_use
 
-# Install (using trizen)
+# Install - using trizen
 - aur:
     use: trizen
     name:
@@ -50,7 +50,7 @@ Use it in a task, as in the following examples:
       - package_name_2 
   [...]
 
-# Upgrade (using pacaur)
+# Upgrade - using pacaur
 - aur: upgrade=yes use=pacaur
   [...]
 ```
