@@ -4,6 +4,7 @@ Ansible module to use some AUR helpers. The following helpers are supported and 
 - [trizen](https://github.com/trizen/trizen)
 - [yaourt](https://github.com/archlinuxfr/yaourt)
 - [yay](https://github.com/Jguer/yay)
+- internal helper
 
 ## Options
 |parameter      |required |default |choices                                      |comments|
@@ -16,6 +17,7 @@ Ansible module to use some AUR helpers. The following helpers are supported and 
 ### Note
 * Either *name* or *upgrade* is required, both cannot be used together.
 * *skip_installed* cannot be used with *upgrade*.
+* In the *use* *auto* mode, the internal mode is used as a fallback if no known helper is found
 
 ## Installing
 1. Clone the *ansibe-aur* repository in your playbook custom-module directory:
@@ -44,12 +46,12 @@ Use it in a task, as in the following examples:
   become: yes
   become_user: user_that_has_nopasswd_in_sudoers_for_pacman_use
 
-# Install - using the first known helper found
+# Install package_name using the first known helper found
 - aur: name=package_name
   become: yes
   become_user: user_that_has_nopasswd_in_sudoers_for_pacman_use
 
-# Install - using trizen
+# Install package_name_1 and package_name_2 using trizen
 - aur:
     use: trizen
     name:
