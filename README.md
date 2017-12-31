@@ -17,7 +17,7 @@ Ansible module to use some AUR helpers. The following helpers are supported and 
 ### Note
 * Either *name* or *upgrade* is required, both cannot be used together.
 * *skip_installed* cannot be used with *upgrade*.
-* In the *use* *auto* mode, the internal mode is used as a fallback if no known helper is found
+* In the *use* *auto* mode, the internal helper is used as a fallback if no known helper is found
 
 ## Installing
 1. Clone the *ansibe-aur* repository in your playbook custom-module directory:
