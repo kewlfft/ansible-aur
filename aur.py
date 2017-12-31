@@ -105,7 +105,7 @@ def main():
     params = module.params
 
     if params['use'] == 'auto':
-        use = internal
+        use = 'internal'
         for k in use_cmd:
             if module.get_bin_path(k, False):
                 use = k
