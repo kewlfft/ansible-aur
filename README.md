@@ -14,7 +14,8 @@ Ansible module to use some AUR helpers. The following helpers are supported and 
 |skip_installed |no       |no      |yes, no                                      |Skip operations if the package is present.|
 
 ### Note
-Either *name* or *upgrade* is required, both can not be used together.
+* Either *name* or *upgrade* is required, both cannot be used together.
+* *skip_installed* cannot be used with *upgrade*.
 
 ## Installing
 1. Clone the *ansibe-aur* repository in your playbook custom-module directory:
