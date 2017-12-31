@@ -63,7 +63,7 @@ Use it in a task, as in the following examples:
   [...]
 ```
 
-### Create "aur_builder" user
+### Create an "aur_builder" user
 While Ansible expects to ssh as root, AUR helpers do not allow executing operations as root, they all fail with "you cannot perform this operation as root". It is therefore recommended to create a user, *aur_builder*, that has no need for password with pacman in sudoers.
 This can be done in Ansible with the following actions:
 ```
