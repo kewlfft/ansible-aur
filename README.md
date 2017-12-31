@@ -44,12 +44,11 @@ Use it in a task, as in the following examples:
 # Install trizen using the internal helper, skip if trizen is already installed
 - aur: name=trizen use=internal skip_installed=true
   become: yes
-  become_user: user_that_has_nopasswd_in_sudoers_for_pacman_use
+  become_user: aur_builder
 
 # Install package_name using the first known helper found
 - aur: name=package_name
-  become: yes
-  become_user: user_that_has_nopasswd_in_sudoers_for_pacman_use
+  [..]
 
 # Install package_name_1 and package_name_2 using trizen
 - aur:
@@ -62,4 +61,16 @@ Use it in a task, as in the following examples:
 # Upgrade - using pacaur
 - aur: upgrade=yes use=pacaur
   [...]
+```
+
+### Create aur_builder
+While Ansible expects to ssh as root, AUR helpers do not allow executing operations as root, they all fail with "you cannot perform this operation as root". It is therefore recommended to create a user that has no need for password with pacman in sudoers.
+This can be done with Ansible with the following actions:
+```
+- user: name=aur_builder
+
+- copy:
+    path: /etc/sudoers.d/aur_builder-allow-to-sudo-pacman
+    content: 'aur-builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+    validate: 'visudo -cf %s'
 ```
