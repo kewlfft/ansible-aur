@@ -63,14 +63,14 @@ Use it in a task, as in the following examples:
   [...]
 ```
 
-### Create aur_builder
-While Ansible expects to ssh as root, AUR helpers do not allow executing operations as root, they all fail with "you cannot perform this operation as root". It is therefore recommended to create a user that has no need for password with pacman in sudoers.
-This can be done with Ansible with the following actions:
+### Create "aur_builder" user
+While Ansible expects to ssh as root, AUR helpers do not allow executing operations as root, they all fail with "you cannot perform this operation as root". It is therefore recommended to create a user, *aur_builder*, that has no need for password with pacman in sudoers.
+This can be done in Ansible with the following actions:
 ```
 - user: name=aur_builder
 
 - copy:
     path: /etc/sudoers.d/aur_builder-allow-to-sudo-pacman
-    content: 'aur-builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
-    validate: 'visudo -cf %s'
+    content: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+    validate: /usr/sbin/visudo -cf %s
 ```
