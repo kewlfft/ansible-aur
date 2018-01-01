@@ -17,7 +17,7 @@ Ansible module to use some AUR helpers as well as a simple internal implementati
 ### Note
 * Either *name* or *upgrade* is required, both cannot be used together.
 * *skip_installed* cannot be used with *upgrade*.
-* In the *use* *auto* mode, the internal helper is used as a fallback if no known helper is found
+* In the *use*=*auto* mode, the internal helper is used as a fallback if no known helper is found.
 
 ## Installing
 1. Clone the *ansibe-aur* repository in your playbook custom-module directory:
@@ -33,9 +33,10 @@ ln --symbolic ansible-aur/aur.py aur
 ```
 
 ## Usage
-### Warning
-* It is recommended to use the official *pacman* module for removal or for system upgrade with the repositories, this module aims to cover the AUR.
-* Searches are limited to the AUR, using the *--aur* parameter, except for *yay* and *yaourt* which do not support the option and systematically also search the repositories.
+### Note
+* This module aims to cover the AUR only:
+  * For package removal or system upgrade with the repositories, it is recommended to use the official *pacman* module,
+  * Searches are limited to the AUR, using the *--aur* parameter, except for *yay* and *yaourt* which do not support the option and systematically also search the repositories.
 * A package is reinstalled only if an update is available, using the *--needed* parameter, except for *yay* which does not support it and systematically reinstalls.
 
 ### Examples
@@ -63,8 +64,8 @@ Use it in a task, as in the following examples:
   [...]
 ```
 
-### Create an "aur_builder" user
-While Ansible expects to ssh as root, AUR helpers do not allow executing operations as root, they all fail with "you cannot perform this operation as root". It is therefore recommended to create a user, *aur_builder*, that has no need for password with pacman in sudoers.
+### Create the "aur_builder" user
+While Ansible expects to SSH as root, AUR helpers do not allow executing operations as root, they all fail with "you cannot perform this operation as root". It is therefore recommended to create a user, that we will call for example *aur_builder*, that has no need for password with pacman in sudoers.
 This can be done in Ansible with the following actions:
 ```
 - user: name=aur_builder
