@@ -68,7 +68,7 @@ Use it in a task, as in the following examples:
 While Ansible expects to SSH as root, AUR helpers do not allow executing operations as root, they all fail with "you cannot perform this operation as root". It is therefore recommended to create a user, that we will call for example *aur_builder*, that has no need for password with pacman in sudoers.
 This can be done in Ansible with the following actions:
 ```
-- user: name=aur_builder
+- user: name=aur_builder group=wheel
 
 - copy:
     path: /etc/sudoers.d/aur_builder-allow-to-sudo-pacman
