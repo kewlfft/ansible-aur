@@ -68,10 +68,15 @@ Use it in a task, as in the following examples:
 While Ansible expects to SSH as root, AUR helpers do not allow executing operations as root, they all fail with "you cannot perform this operation as root". It is therefore recommended to create a user, that we will call for example *aur_builder*, that has no need for password with pacman in sudoers.
 This can be done in Ansible with the following actions:
 ```
-- user: name=aur_builder group=wheel
-
-- copy:
-    dest: /etc/sudoers.d/11-install-aur_builder
-    content: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
-    validate: visudo -cf %s
+- user: 
+    name: aur_builder
+    group: wheel
+    shell: /usr/bin/nologin
+    home: /home/aur_builder
+- lineinfile:
+    path: /etc/sudoers.d/11-install-aur_builder
+    regexp: '^aur_builder'
+    line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+    create: yes
+    validate: 'visudo -cf %s'
 ```
