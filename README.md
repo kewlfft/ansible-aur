@@ -71,7 +71,6 @@ This can be done in Ansible with the following actions:
 - user: 
     name: aur_builder
     group: wheel
-    shell: /usr/bin/nologin
 - lineinfile:
     path: /etc/sudoers.d/11-install-aur_builder
     line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
