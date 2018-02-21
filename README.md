@@ -72,10 +72,8 @@ This can be done in Ansible with the following actions:
     name: aur_builder
     group: wheel
     shell: /usr/bin/nologin
-    home: /home/aur_builder
 - lineinfile:
     path: /etc/sudoers.d/11-install-aur_builder
-    regexp: '^aur_builder'
     line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
     create: yes
     validate: 'visudo -cf %s'
