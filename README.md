@@ -71,7 +71,7 @@ This can be done in Ansible with the following actions:
 - user: name=aur_builder group=wheel
 
 - copy:
-    path: /etc/sudoers.d/11-install-aur_builder
+    dest: /etc/sudoers.d/11-install-aur_builder
     content: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
     validate: visudo -cf %s
 ```
