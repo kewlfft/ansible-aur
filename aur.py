@@ -10,6 +10,7 @@ import tempfile
 
 use_cmd = {
     'pacaur': ['env', 'LC_ALL=C', 'pacaur', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
+    'pikaur': ['env', 'LC_ALL=C', 'pacaur', '-S', '--noconfirm', '--noedit', '--needed'],
     'trizen': ['env', 'LC_ALL=C', 'trizen', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
     'yaourt': ['env', 'LC_ALL=C', 'yaourt', '-S', '--noconfirm', '--needed'],
     'yay': ['env', 'LC_ALL=C', 'yay', '-S', '--noconfirm'],
@@ -92,7 +93,7 @@ def main():
             },
             'use': {
                 'default': 'auto',
-                'choices': ['auto', 'pacaur', 'trizen', 'yaourt', 'yay', 'internal'],
+                'choices': ['auto', 'pacaur', 'pikaur', 'trizen', 'yaourt', 'yay', 'internal'],
             },
             'skip_installed': {
                 'default': 'no',
