@@ -8,12 +8,15 @@ import os
 import os.path
 import tempfile
 
+def_lang = ['env', 'LC_ALL=C']
+
 use_cmd = {
-    'pacaur': ['env', 'LC_ALL=C', 'pacaur', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
-    'trizen': ['env', 'LC_ALL=C', 'trizen', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
-    'yaourt': ['env', 'LC_ALL=C', 'yaourt', '-S', '--noconfirm', '--needed'],
-    'yay': ['env', 'LC_ALL=C', 'yay', '-S', '--noconfirm'],
-    'internal': ['env', 'LC_ALL=C', 'makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
+    'pacaur': ['pacaur', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
+    'trizen': ['trizen', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
+    'pikaur': ['pikaur', '-S', '--noconfirm', '--noedit', '--needed'],
+    'yaourt': ['yaourt', '-S', '--noconfirm', '--needed'],
+    'yay': ['yay', '-S', '--noconfirm'],
+    'internal': ['makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
 }
 
 
@@ -47,7 +50,7 @@ def install_internal(module, package):
 def upgrade(module, use):
     assert use in use_cmd
 
-    rc, out, err = module.run_command(use_cmd[use] + ['-u'], check_rc=True)
+    rc, out, err = module.run_command(def_lang + use_cmd[use] + ['-u'], check_rc=True)
 
     module.exit_json(
         changed=not (out == '' or 'there is nothing to do' in out or 'No AUR updates found' in out),
@@ -69,7 +72,7 @@ def install_packages(module, packages, use, skip_installed):
         if use == 'internal':
             rc, out, err = install_internal(module, package)
         else:
-            rc, out, err = module.run_command(use_cmd[use] + [package], check_rc=True)
+            rc, out, err = module.run_command(def_lang + use_cmd[use] + [package], check_rc=True)
         changed_iter = changed_iter or not (out == '' or '-- skipping' in out or 'there is nothing to do' in out)
 
     module.exit_json(
@@ -92,7 +95,7 @@ def main():
             },
             'use': {
                 'default': 'auto',
-                'choices': ['auto', 'pacaur', 'trizen', 'yaourt', 'yay', 'internal'],
+                'choices': ['auto', 'pacaur', 'trizen', 'pikaur', 'yaourt', 'yay', 'internal'],
             },
             'skip_installed': {
                 'default': 'no',
