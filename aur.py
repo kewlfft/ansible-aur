@@ -2,7 +2,8 @@
 
 from ansible.module_utils.basic import *
 import json
-import urllib.request
+from ansible.module_utils import six
+from six.moves import urllib
 import tarfile
 import os
 import os.path
