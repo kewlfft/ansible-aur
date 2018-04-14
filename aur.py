@@ -12,6 +12,7 @@ import tempfile
 def_lang = ['env', 'LC_ALL=C']
 
 use_cmd = {
+    'aurman': ['aurman', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
     'pacaur': ['pacaur', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
     'trizen': ['trizen', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
     'pikaur': ['pikaur', '-S', '--noconfirm', '--noedit', '--needed'],
@@ -96,7 +97,7 @@ def main():
             },
             'use': {
                 'default': 'auto',
-                'choices': ['auto', 'pacaur', 'trizen', 'pikaur', 'yaourt', 'yay', 'internal'],
+                'choices': ['auto', 'aurman', 'pacaur', 'trizen', 'pikaur', 'yaourt', 'yay', 'internal'],
             },
             'skip_installed': {
                 'default': 'no',

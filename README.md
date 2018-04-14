@@ -1,5 +1,6 @@
 # Ansible AUR helper
 Ansible module to use some Arch User Repository (AUR) helpers as well as a simple internal implementation as a fallback. The following helpers are supported and automatically selected in the order they are listed:
+- [aurman](https://github.com/polygamma/aurman)
 - [pacaur](https://github.com/rmarquis/pacaur)
 - [trizen](https://github.com/trizen/trizen)
 - [pikaur](https://github.com/actionless/pikaur)
@@ -8,12 +9,12 @@ Ansible module to use some Arch User Repository (AUR) helpers as well as a simpl
 - internal helper
 
 ## Options
-|parameter      |required |default |choices                                              |comments|
-|---            |---      |---     |---                                                  |---|
-|name           |no       |        |                                                     |Name or list of names of the package(s) to install or upgrade.|
-|upgrade        |no       |no      |yes, no                                              |Whether or not to upgrade whole system.|
-|use            |no       |auto    |auto, pacaur, trizen, pikaur, yaourt, yay, internal  |The helper to use, 'auto' uses the first known helper found, 'internal' uses the internal helper.|
-|skip_installed |no       |no      |yes, no                                              |Skip operations if the package is present.|
+|parameter      |required |default |choices                                                      |comments|
+|---            |---      |---     |---                                                          |---|
+|name           |no       |        |                                                             |Name or list of names of the package(s) to install or upgrade.|
+|upgrade        |no       |no      |yes, no                                                      |Whether or not to upgrade whole system.|
+|use            |no       |auto    |auto, aurman, pacaur, trizen, pikaur, yaourt, yay, internal  |The helper to use, 'auto' uses the first known helper found, 'internal' uses the internal helper.|
+|skip_installed |no       |no      |yes, no                                                      |Skip operations if the package is present.|
 
 ### Note
 * Either *name* or *upgrade* is required, both cannot be used together.
