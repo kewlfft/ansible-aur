@@ -12,6 +12,7 @@ import tempfile
 def_lang = ['env', 'LC_ALL=C']
 
 use_cmd = {
+    'aurman': ['aurman', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
     'pacaur': ['pacaur', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
     'trizen': ['trizen', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
     'pikaur': ['pikaur', '-S', '--noconfirm', '--noedit', '--needed'],
@@ -54,7 +55,7 @@ def upgrade(module, use):
     rc, out, err = module.run_command(def_lang + use_cmd[use] + ['-u'], check_rc=True)
 
     module.exit_json(
-        changed=not (out == '' or 'there is nothing to do' in out or 'No AUR updates found' in out),
+        changed=not (out == '' or 'nothing to do' in out or 'No AUR updates found' in out),
         msg='upgraded system',
         helper_used=use,
     )
@@ -74,7 +75,7 @@ def install_packages(module, packages, use, skip_installed):
             rc, out, err = install_internal(module, package)
         else:
             rc, out, err = module.run_command(def_lang + use_cmd[use] + [package], check_rc=True)
-        changed_iter = changed_iter or not (out == '' or '-- skipping' in out or 'there is nothing to do' in out)
+        changed_iter = changed_iter or not (out == '' or '-- skipping' in out or 'nothing to do' in out)
 
     module.exit_json(
         changed=changed_iter,
@@ -96,7 +97,7 @@ def main():
             },
             'use': {
                 'default': 'auto',
-                'choices': ['auto', 'pacaur', 'trizen', 'pikaur', 'yaourt', 'yay', 'internal'],
+                'choices': ['auto', 'aurman', 'pacaur', 'trizen', 'pikaur', 'yaourt', 'yay', 'internal'],
             },
             'skip_installed': {
                 'default': 'no',
