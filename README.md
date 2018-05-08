@@ -36,9 +36,7 @@ ln --symbolic ansible-aur/aur.py aur
 
 ## Usage
 ### Note
-* This module aims to cover the AUR only:
-  * For package removal or system upgrade with the repositories, it is recommended to use the official *pacman* module,
-  * Searches are limited to the AUR, using the *--aur* parameter, except for *yay* and *yaourt* which do not support the option and systematically also search the repositories.
+* This module aims to cover the AUR, for package removal or system upgrade with the repositories, it is recommended to use the official *pacman* module,
 * A package is reinstalled only if an update is available, using the *--needed* parameter, except for *yay* which does not support it and systematically reinstalls.
 
 ### Examples
