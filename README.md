@@ -49,7 +49,7 @@ Use it in a task, as in the following examples:
 
 # Install package_name using the first known helper found
 - aur: name=package_name
-  [..]
+  ...
 
 # Install package_name_1 and package_name_2 using trizen
 - aur:
@@ -57,11 +57,11 @@ Use it in a task, as in the following examples:
     name:
       - package_name_1
       - package_name_2
-  [...]
+  ...
 
 # Upgrade - using pacaur
 - aur: upgrade=yes use=pacaur
-  [...]
+  ...
 ```
 
 ### Create the "aur_builder" user
