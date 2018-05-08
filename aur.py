@@ -13,14 +13,15 @@ import tempfile
 def_lang = ['env', 'LC_ALL=C']
 
 use_cmd = {
-    'aurman': ['aurman', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
-    'pacaur': ['pacaur', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
-    'trizen': ['trizen', '-S', '--noconfirm', '--noedit', '--needed', '--aur'],
+    'aurman': ['aurman', '-S', '--noconfirm', '--noedit', '--needed'],
+    'pacaur': ['pacaur', '-S', '--noconfirm', '--noedit', '--needed'],
+    'trizen': ['trizen', '-S', '--noconfirm', '--noedit', '--needed'],
     'pikaur': ['pikaur', '-S', '--noconfirm', '--noedit', '--needed'],
     'yaourt': ['yaourt', '-S', '--noconfirm', '--needed'],
     'yay': ['yay', '-S', '--noconfirm'],
     'internal': ['makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
 }
+# optional: aurman, pacaur, trizen have a --aur option, do things only for aur
 
 
 def package_installed(module, package):
@@ -101,7 +102,7 @@ def main():
                 'choices': ['auto', 'aurman', 'pacaur', 'trizen', 'pikaur', 'yaourt', 'yay', 'internal'],
             },
             'skip_installed': {
-                'default': 'no',
+                'default': False,
                 'type': 'bool',
             },
         },
@@ -112,7 +113,7 @@ def main():
 
     if params['use'] == 'auto':
         use = 'internal'
-        # select the first helper for which the bin is found
+        # auto: select the first helper for which the bin is found
         for k in use_cmd:
             if module.get_bin_path(k, False):
                 use = k
