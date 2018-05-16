@@ -72,6 +72,8 @@ def install_with_makepkg(module, package):
         tar.extractall()
         tar.close()
         os.chdir(format(result['Name']))
+        if module.params['skip_pgp_check']:
+            use_cmd['makepkg'].append('--skippgpcheck')
         rc, out, err = module.run_command(use_cmd['makepkg'], check_rc=True)
         os.chdir(current_path)
     return (rc, out, err)
@@ -128,6 +130,10 @@ def main():
                 'choices': ['auto', 'aurman', 'pacaur', 'trizen', 'pikaur', 'yaourt', 'yay', 'makepkg'],
             },
             'skip_installed': {
+                'default': False,
+                'type': 'bool',
+            },
+            'skip_pgp_check': {
                 'default': False,
                 'type': 'bool',
             },
