@@ -30,6 +30,31 @@ def package_installed(module, package):
 
 
 def install_internal(module, package):
+def check_packages(module, packages):
+    """
+    Inform the user what would change if the module were run
+    """
+    would_be_changed = []
+
+    for package in packages:
+        installed = package_installed(module, package)
+        if not installed:
+            would_be_changed.append(package)
+
+    if would_be_changed:
+        status = True
+        if (len(packages) > 1):
+            message = '%s package(s) would be installed' % str(len(would_be_changed))
+        else:
+            message = 'package would be installed'
+    else:
+        status = False
+        if (len(packages) > 1):
+            message = 'all packages are already installed'
+        else:
+            message = 'package is already installed'
+    module.exit_json(changed=status, msg=message)
+
     f = urllib.request.urlopen('https://aur.archlinux.org/rpc/?v=5&type=info&arg={}'.format(package))
     result = json.loads(f.read().decode('utf8'))
     if result['resultcount'] != 1:
@@ -107,9 +132,13 @@ def main():
             },
         },
         required_one_of=[['name', 'upgrade']],
+        supports_check_mode=True
     )
 
     params = module.params
+
+    if module.check_mode:
+        check_packages(module, params['name'])
 
     if params['use'] == 'auto':
         use = 'internal'
