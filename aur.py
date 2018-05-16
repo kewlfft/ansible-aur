@@ -87,7 +87,7 @@ def upgrade(module, use):
     module.exit_json(
         changed=not (out == '' or 'nothing to do' in out or 'No AUR updates found' in out),
         msg='upgraded system',
-        helper_used=use,
+        helper=use,
     )
 
 
@@ -105,12 +105,18 @@ def install_packages(module, packages, use, skip_installed):
             rc, out, err = install_with_makepkg(module, package)
         else:
             rc, out, err = module.run_command(def_lang + use_cmd[use] + [package], check_rc=True)
+
         changed_iter = changed_iter or not (out == '' or '-- skipping' in out or 'nothing to do' in out)
+
+    if changed_iter:
+        message = 'installed package(s)'
+    else:
+        message = 'package(s) already installed'
 
     module.exit_json(
         changed=changed_iter,
-        msg='installed package' if not rc else err,
-        helper_used=use,
+        msg=message if not rc else err,
+        helper=use,
         rc=rc,
     )
 
