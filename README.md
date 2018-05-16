@@ -1,25 +1,29 @@
 # Ansible AUR helper
-Ansible module to use some Arch User Repository (AUR) helpers as well as a simple internal implementation as a fallback. The following helpers are supported and automatically selected in the order they are listed:
+Ansible module to use some Arch User Repository (AUR) helpers as well as makepkg.
+
+The following helpers are supported and automatically selected in the order they are listed:
 - [aurman](https://github.com/polygamma/aurman)
 - [pacaur](https://github.com/rmarquis/pacaur)
 - [trizen](https://github.com/trizen/trizen)
 - [pikaur](https://github.com/actionless/pikaur)
 - [yaourt](https://github.com/archlinuxfr/yaourt)
 - [yay](https://github.com/Jguer/yay)
-- internal helper
+
+makepkg will be used if no helper was found or if it's specified explicitly.
+- [makepkg](https://wiki.archlinux.org/index.php/makepkg)
 
 ## Options
 |parameter      |required |default |choices                                                      |comments|
 |---            |---      |---     |---                                                          |---|
 |name           |no       |        |                                                             |Name or list of names of the package(s) to install or upgrade.|
 |upgrade        |no       |no      |yes, no                                                      |Whether or not to upgrade whole system.|
-|use            |no       |auto    |auto, aurman, pacaur, trizen, pikaur, yaourt, yay, internal  |The helper to use, 'auto' uses the first known helper found, 'internal' uses the internal helper.|
+|use            |no       |auto    |auto, aurman, pacaur, trizen, pikaur, yaourt, yay, makepkg  |The helper to use, 'auto' uses the first known helper found and makepkg as a fallback.|
 |skip_installed |no       |no      |yes, no                                                      |Skip operations if the package is present.|
 
 ### Note
 * Either *name* or *upgrade* is required, both cannot be used together.
 * *skip_installed* cannot be used with *upgrade*.
-* In the *use*=*auto* mode, the internal helper is used as a fallback if no known helper is found.
+* In the *use*=*auto* mode, makepkg is used as a fallback if no known helper is found.
 
 ## Installing
 1. Clone the *ansibe-aur* repository in your playbook custom-module directory:
@@ -42,8 +46,8 @@ ln --symbolic ansible-aur/aur.py aur
 ### Examples
 Use it in a task, as in the following examples:
 ```
-# Install trizen using the internal helper, skip if trizen is already installed
-- aur: name=trizen use=internal skip_installed=true
+# Install trizen using makepkg, skip if trizen is already installed
+- aur: name=trizen use=makepkg skip_installed=true
   become: yes
   become_user: aur_builder
 

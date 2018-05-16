@@ -19,7 +19,7 @@ use_cmd = {
     'pikaur': ['pikaur', '-S', '--noconfirm', '--noedit', '--needed'],
     'yaourt': ['yaourt', '-S', '--noconfirm', '--needed'],
     'yay': ['yay', '-S', '--noconfirm'],
-    'internal': ['makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
+    'makepkg': ['makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
 }
 # optional: aurman, pacaur, trizen have a --aur option, do things only for aur
 
@@ -29,7 +29,6 @@ def package_installed(module, package):
     return rc == 0
 
 
-def install_internal(module, package):
 def check_packages(module, packages):
     """
     Inform the user what would change if the module were run
@@ -55,6 +54,8 @@ def check_packages(module, packages):
             message = 'package is already installed'
     module.exit_json(changed=status, msg=message)
 
+
+def install_with_makepkg(module, package):
     f = urllib.request.urlopen('https://aur.archlinux.org/rpc/?v=5&type=info&arg={}'.format(package))
     result = json.loads(f.read().decode('utf8'))
     if result['resultcount'] != 1:
@@ -71,7 +72,7 @@ def check_packages(module, packages):
         tar.extractall()
         tar.close()
         os.chdir(format(result['Name']))
-        rc, out, err = module.run_command(use_cmd['internal'], check_rc=True)
+        rc, out, err = module.run_command(use_cmd['makepkg'], check_rc=True)
         os.chdir(current_path)
     return (rc, out, err)
 
@@ -98,8 +99,8 @@ def install_packages(module, packages, use, skip_installed):
             if package_installed(module, package):
                 rc = 0
                 continue
-        if use == 'internal':
-            rc, out, err = install_internal(module, package)
+        if use == 'makepkg':
+            rc, out, err = install_with_makepkg(module, package)
         else:
             rc, out, err = module.run_command(def_lang + use_cmd[use] + [package], check_rc=True)
         changed_iter = changed_iter or not (out == '' or '-- skipping' in out or 'nothing to do' in out)
@@ -124,7 +125,7 @@ def main():
             },
             'use': {
                 'default': 'auto',
-                'choices': ['auto', 'aurman', 'pacaur', 'trizen', 'pikaur', 'yaourt', 'yay', 'internal'],
+                'choices': ['auto', 'aurman', 'pacaur', 'trizen', 'pikaur', 'yaourt', 'yay', 'makepkg'],
             },
             'skip_installed': {
                 'default': False,
@@ -141,7 +142,7 @@ def main():
         check_packages(module, params['name'])
 
     if params['use'] == 'auto':
-        use = 'internal'
+        use = 'makepkg'
         # auto: select the first helper for which the bin is found
         for k in use_cmd:
             if module.get_bin_path(k, False):
@@ -150,7 +151,7 @@ def main():
     else:
         use = params['use']
 
-    if params['upgrade'] and (params['name'] or params['skip_installed'] or use == 'internal'):
+    if params['upgrade'] and (params['name'] or params['skip_installed'] or use == 'makepkg'):
         module.fail_json(msg="Upgrade cannot be used with this option.")
     else:
         if params['upgrade']:
