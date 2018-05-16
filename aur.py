@@ -25,6 +25,9 @@ use_cmd = {
 
 
 def package_installed(module, package):
+    """
+    Determine if the package is already installed
+    """
     rc, _, _ = module.run_command(['pacman', '-Q', package], check_rc=False)
     return rc == 0
 
@@ -56,6 +59,9 @@ def check_packages(module, packages):
 
 
 def install_with_makepkg(module, package):
+    """
+    Install the specified package with makepkg
+    """
     f = urllib.request.urlopen('https://aur.archlinux.org/rpc/?v=5&type=info&arg={}'.format(package))
     result = json.loads(f.read().decode('utf8'))
     if result['resultcount'] != 1:
@@ -80,6 +86,9 @@ def install_with_makepkg(module, package):
 
 
 def upgrade(module, use):
+    """
+    Upgrade the whole system
+    """
     assert use in use_cmd
 
     rc, out, err = module.run_command(def_lang + use_cmd[use] + ['-u'], check_rc=True)
@@ -92,6 +101,9 @@ def upgrade(module, use):
 
 
 def install_packages(module, packages, use, skip_installed):
+    """
+    Install the specified packages
+    """
     assert use in use_cmd
 
     changed_iter = False
