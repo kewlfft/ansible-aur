@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
 from ansible.module_utils.basic import *
+from ansible.module_utils.urls import open_url
 import json
-from ansible.module_utils import six
-from six.moves import urllib
+# try:
+#     from urllib.request import urlopen
+# except ImportError:
+#     from urllib2 import urlopen
 import tarfile
 import os
 import os.path
@@ -62,12 +65,12 @@ def install_with_makepkg(module, package):
     """
     Install the specified package with makepkg
     """
-    f = urllib.request.urlopen('https://aur.archlinux.org/rpc/?v=5&type=info&arg={}'.format(package))
+    f = open_url('https://aur.archlinux.org/rpc/?v=5&type=info&arg={}'.format(package))
     result = json.loads(f.read().decode('utf8'))
     if result['resultcount'] != 1:
         return (1, '', 'package not found')
     result = result['results'][0]
-    f = urllib.request.urlopen('https://aur.archlinux.org/{}'.format(result['URLPath']))
+    f = open_url('https://aur.archlinux.org/{}'.format(result['URLPath']))
     current_path = os.getcwd()
     with tempfile.TemporaryDirectory() as tmpdir:
         os.chdir(tmpdir)
