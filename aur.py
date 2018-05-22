@@ -3,10 +3,6 @@
 from ansible.module_utils.basic import *
 from ansible.module_utils.urls import open_url
 import json
-# try:
-#     from urllib.request import urlopen
-# except ImportError:
-#     from urllib2 import urlopen
 import tarfile
 import os
 import os.path
