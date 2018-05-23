@@ -16,7 +16,6 @@ use_cmd = {
     'pacaur': ['pacaur', '-S', '--noconfirm', '--noedit', '--needed'],
     'trizen': ['trizen', '-S', '--noconfirm', '--noedit', '--needed'],
     'pikaur': ['pikaur', '-S', '--noconfirm', '--noedit', '--needed'],
-    'yaourt': ['yaourt', '-S', '--noconfirm', '--needed'],
     'yay': ['yay', '-S', '--noconfirm'],
     'makepkg': ['makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
 }
