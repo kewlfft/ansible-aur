@@ -28,8 +28,7 @@ makepkg will be used if no helper was found or if it's specified explicitly.
 ## Installing
 ### aur-ansible-git AUR package
 The [aur-ansible-git](https://aur.archlinux.org/packages/ansible-aur-git) package is available in the AUR.
-
-Note the module is installed in `/usr/share/ansible/plugins/modules` which is one of a default module library path.
+Note the module is installed in `/usr/share/ansible/plugins/modules` which is one of the default module library paths.
 
 ### Manual installation 
 1. Clone the *ansible-aur* repository in your playbook custom-module directory:
