@@ -26,6 +26,12 @@ makepkg will be used if no helper was found or if it's specified explicitly.
 * In the *use*=*auto* mode, makepkg is used as a fallback if no known helper is found.
 
 ## Installing
+### aur-ansible-git AUR package
+The [aur-ansible-git](https://aur.archlinux.org/packages/ansible-aur-git) package is available in the AUR.
+
+Note the module is installed in `/usr/share/ansible/plugins/modules` which is one of a default module library path.
+
+### Manual installation 
 1. Clone the *ansibe-aur* repository in your playbook custom-module directory:
 ```
 mkdir --parents library
