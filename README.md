@@ -33,7 +33,7 @@ Note the module is installed in `/usr/share/ansible/plugins/modules` which is on
 ### Manual installation
 1. Clone the *ansible-aur* repository in your playbook custom-module directory:
 ```
-mkdir --parents library
+mkdir library
 cd library
 git clone git@github.com:kewlfft/ansible-aur.git
 ```
