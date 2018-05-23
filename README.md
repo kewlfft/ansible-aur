@@ -39,7 +39,7 @@ cd library
 git clone git@github.com:kewlfft/ansible-aur.git
 ```
 
-2. Link the script to `library/aur`:
+2. Link the script `library/ansible-aur/aur.py` to `library/aur`:
 ```
 ln --symbolic ansible-aur/aur.py aur
 ```
