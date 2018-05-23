@@ -16,7 +16,7 @@ DOCUMENTATION = '''
 module: ansible-aur
 short_description:  Manage packages from the AUR
 description:
-    - Manage packages from the Arch Linux Repository (AUR)
+    - Manage packages from the Arch User Repository (AUR)
 author:
     - Kewl <xrjy@nygb.rh.bet(rot13)>
 options:
