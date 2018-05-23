@@ -35,7 +35,7 @@ Note the module is installed in `/usr/share/ansible/plugins/modules` which is on
 ```
 mkdir library
 cd library
-git clone git@github.com:kewlfft/ansible-aur.git
+git clone https://github.com/kewlfft/ansible-aur.git
 ```
 
 2. Link the script `library/ansible-aur/aur.py` to `library/aur.py`:
