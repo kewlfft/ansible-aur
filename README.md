@@ -32,7 +32,7 @@ The [aur-ansible-git](https://aur.archlinux.org/packages/ansible-aur-git) packag
 Note the module is installed in `/usr/share/ansible/plugins/modules` which is one of a default module library path.
 
 ### Manual installation 
-1. Clone the *ansibe-aur* repository in your playbook custom-module directory:
+1. Clone the *ansible-aur* repository in your playbook custom-module directory:
 ```
 mkdir --parents library
 cd library
