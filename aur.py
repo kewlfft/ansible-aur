@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/python
+
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from ansible.module_utils.basic import *
 from ansible.module_utils.urls import open_url
@@ -7,6 +9,64 @@ import tarfile
 import os
 import os.path
 import tempfile
+
+
+DOCUMENTATION = '''
+---
+module: ansible-aur
+short_description:  Manage packages from the AUR
+description:
+    - Manage packages from the Arch Linux Repository (AUR)
+author:
+    - Kewl <xrjy@nygb.rh.bet(rot13)>
+options:
+    name:
+        description:
+            - Name or list of names of the package(s) to install or upgrade.
+
+    upgrade:
+        description:
+            - Whether or not to upgrade whole system.
+        type: bool
+        default: no
+
+    use:
+        description:
+            - The helper to use, 'auto' uses the first known helper found and makepkg as a fallback.
+        default: auto
+        choices: [ auto, aurman, pacaur, trizen, pikaur, yay, makepkg ]
+
+    skip_installed:
+        description:
+            - Skip operations if the package is present.
+        type: bool
+        default: no
+
+    skip_pgp_check:
+        description:
+            - Skip verification of PGP signatures.
+              This is useful when installing packages on a host without GnuPG (properly) configured.
+              Only valid with makepkg.
+        type: bool
+        default: no
+notes:
+  - When used with a `loop:` each package will be processed individually,
+    it is much more efficient to pass the list directly to the `name` option.
+'''
+
+RETURN = '''
+msg:
+    description: action that has been taken
+helper:
+    the helper that was actually used
+'''
+
+EXAMPLES = '''
+- name: Install trizen using makepkg, skip if trizen is already installed
+  aur: name=trizen use=makepkg skip_installed=true
+  become: yes
+  become_user: aur_builder
+'''
 
 
 def_lang = ['env', 'LC_ALL=C']
