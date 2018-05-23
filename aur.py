@@ -13,8 +13,8 @@ import tempfile
 
 DOCUMENTATION = '''
 ---
-module: ansible-aur
-short_description:  Manage packages from the AUR
+module: aur
+short_description: Manage packages from the AUR
 description:
     - Manage packages from the Arch User Repository (AUR)
 author:
