@@ -31,16 +31,9 @@ The [aur-ansible-git](https://aur.archlinux.org/packages/ansible-aur-git) packag
 Note the module is installed in `/usr/share/ansible/plugins/modules` which is one of the default module library paths.
 
 ### Manual installation
-1. Clone the *ansible-aur* repository in your playbook custom-module directory:
+Just clone the *ansible-aur* repository into your user custom-module directory:
 ```
-mkdir library
-cd library
-git clone https://github.com/kewlfft/ansible-aur.git
-```
-
-2. Link the script `library/ansible-aur/aur.py` to `library/aur.py`:
-```
-ln --symbolic ansible-aur/aur.py aur.py
+git clone https://github.com/kewlfft/ansible-aur.git ~/.ansible/plugins/modules/aur
 ```
 
 ## Usage
