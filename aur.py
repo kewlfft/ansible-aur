@@ -39,8 +39,9 @@ options:
     skip_installed:
         description:
             - Skip operations if the package is present.
-        type: bool
+              Choosing versioned will all you to skip non-VCS (-git, -hg, etc.) packages.
         default: no
+        choices: [ all, versioned, none]
 
     skip_pgp_check:
         description:
@@ -81,6 +82,8 @@ use_cmd = {
 }
 # optional: aurman, pacaur, trizen have a --aur option, do things only for aur
 
+# From https://wiki.archlinux.org/index.php/VCS_package_guidelines
+vcs_suffixes = ('-git', '-bzr', '-darcs', '-hg', '-svn', '-cvs')
 
 def package_installed(module, package):
     """
@@ -167,10 +170,12 @@ def install_packages(module, packages, use, skip_installed):
     changed_iter = False
 
     for package in packages:
-        if skip_installed:
+        if skip_installed in ('all', 'versioned'):
             if package_installed(module, package):
-                rc = 0
-                continue
+                vcs = package.endswith(vcs_suffixes)
+                if skip_installed == 'all' or (skip_installed == 'versioned' and not vcs):
+                    rc = 0
+                    continue
         if use == 'makepkg':
             rc, out, err = install_with_makepkg(module, package)
         else:
@@ -206,8 +211,8 @@ def main():
                 'choices': ['auto', 'aurman', 'pacaur', 'trizen', 'pikaur', 'yaourt', 'yay', 'makepkg'],
             },
             'skip_installed': {
-                'default': False,
-                'type': 'bool',
+                'default': 'versioned',
+                'choices': ['all', 'versioned', 'none'],
             },
             'skip_pgp_check': {
                 'default': False,
