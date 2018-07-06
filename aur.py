@@ -76,7 +76,7 @@ use_cmd = {
     'pacaur': ['pacaur', '-S', '--noconfirm', '--noedit', '--needed'],
     'trizen': ['trizen', '-S', '--noconfirm', '--noedit', '--needed'],
     'pikaur': ['pikaur', '-S', '--noconfirm', '--noedit', '--needed'],
-    'yay': ['yay', '-S', '--noconfirm'],
+    'yay': ['yay', '-S', '--noconfirm', '--needed'],
     'makepkg': ['makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
 }
 # optional: aurman, pacaur, trizen have a --aur option, do things only for aur
