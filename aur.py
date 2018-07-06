@@ -40,7 +40,7 @@ options:
         description:
             - Skip operations if the package is present.
         type: bool
-        default: no
+        default: yes
 
     skip_pgp_check:
         description:
@@ -206,7 +206,7 @@ def main():
                 'choices': ['auto', 'aurman', 'pacaur', 'trizen', 'pikaur', 'yaourt', 'yay', 'makepkg'],
             },
             'skip_installed': {
-                'default': False,
+                'default': True,
                 'type': 'bool',
             },
             'skip_pgp_check': {
