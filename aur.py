@@ -72,7 +72,7 @@ EXAMPLES = '''
 def_lang = ['env', 'LC_ALL=C']
 
 use_cmd = {
-    'aurman': ['aurman', '-S', '--noconfirm', '--noedit', '--needed', '--skip_news'],
+    'aurman': ['aurman', '-S', '--noconfirm', '--noedit', '--needed', '--skip_news', '--pgp_fetch'],
     'yay': ['yay', '-S', '--noconfirm', '--needed'],
     'pacaur': ['pacaur', '-S', '--noconfirm', '--noedit', '--needed'],
     'trizen': ['trizen', '-S', '--noconfirm', '--noedit', '--needed'],
