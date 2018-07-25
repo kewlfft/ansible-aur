@@ -9,7 +9,7 @@ import tarfile
 import os
 import os.path
 import tempfile
-
+import re
 
 DOCUMENTATION = '''
 ---
@@ -27,6 +27,12 @@ options:
     upgrade:
         description:
             - Whether or not to upgrade whole system.
+        type: bool
+        default: no
+
+    aur_repo_only:
+        description:
+            - When upgrading using only the AUR repo
         type: bool
         default: no
 
@@ -143,13 +149,18 @@ def install_with_makepkg(module, package):
     return (rc, out, err)
 
 
-def upgrade(module, use):
+def upgrade(module, use, aur_repo_only):
     """
     Upgrade the whole system
     """
     assert use in use_cmd
 
-    rc, out, err = module.run_command(def_lang + use_cmd[use] + ['-u'], check_rc=True)
+    compatible_aur_use = re.match("(aurman|pacaur|trizen)" , use)
+    if compatible_aur_use and aur_repo_only:
+            rc, out, err = module.run_command(def_lang + use_cmd[use] + ['--aur'] + ['-u'], check_rc=True)
+    else:
+        message='all only'
+        rc, out, err = module.run_command(def_lang + use_cmd[use] + ['-u'], check_rc=True)
 
     module.exit_json(
         changed=not (out == '' or 'nothing to do' in out or 'No AUR updates found' in out),
@@ -201,6 +212,10 @@ def main():
                 'default': False,
                 'type': 'bool',
             },
+            'aur_repo_only': {
+                'default': False,
+                'type': 'bool',
+            },
             'use': {
                 'default': 'auto',
                 'choices': ['auto', 'aurman', 'pacaur', 'trizen', 'pikaur', 'yaourt', 'yay', 'makepkg'],
@@ -237,7 +252,8 @@ def main():
         module.fail_json(msg="Upgrade cannot be used with this option.")
     else:
         if params['upgrade']:
-            upgrade(module, use)
+            aur_repo_only = params['aur_repo_only']
+            upgrade(module, use, aur_repo_only)
         else:
             install_packages(module, params['name'], use, params['skip_installed'])
 
