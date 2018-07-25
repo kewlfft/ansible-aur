@@ -49,6 +49,10 @@ options:
               Only valid with makepkg.
         type: bool
         default: no
+
+    aur_only:
+        description:
+            - Limit operation to the AUR. Compatible with yay, aurman, pacaur and trizen.
 notes:
   - When used with a `loop:` each package will be processed individually,
     it is much more efficient to pass the list directly to the `name` option.
@@ -79,7 +83,8 @@ use_cmd = {
     'pikaur': ['pikaur', '-S', '--noconfirm', '--noedit', '--needed'],
     'makepkg': ['makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
 }
-# optional: aurman, pacaur, trizen have a --aur option, do things only for aur
+
+has_aur_option = ['yay', 'aurman', 'pacaur', 'trizen']
 
 
 def package_installed(module, package):
@@ -143,13 +148,13 @@ def install_with_makepkg(module, package):
     return (rc, out, err)
 
 
-def upgrade(module, use):
+def upgrade(module, use, aur_only):
     """
     Upgrade the whole system
     """
     assert use in use_cmd
 
-    rc, out, err = module.run_command(def_lang + use_cmd[use] + ['-u'], check_rc=True)
+    rc, out, err = module.run_command(def_lang + use_cmd[use] + ['--aur' if (aur_only and use in has_aur_option) else None] + ['-u'], check_rc=True)
 
     module.exit_json(
         changed=not (out == '' or 'nothing to do' in out or 'No AUR updates found' in out),
@@ -158,7 +163,7 @@ def upgrade(module, use):
     )
 
 
-def install_packages(module, packages, use, skip_installed):
+def install_packages(module, packages, use, skip_installed, aur_only):
     """
     Install the specified packages
     """
@@ -174,7 +179,7 @@ def install_packages(module, packages, use, skip_installed):
         if use == 'makepkg':
             rc, out, err = install_with_makepkg(module, package)
         else:
-            rc, out, err = module.run_command(def_lang + use_cmd[use] + [package], check_rc=True)
+            rc, out, err = module.run_command(def_lang + use_cmd[use] + ['--aur' if (aur_only and use in has_aur_option) else None] + [package], check_rc=True)
 
         changed_iter = changed_iter or not (out == '' or '-- skipping' in out or 'nothing to do' in out)
 
@@ -213,6 +218,10 @@ def main():
                 'default': False,
                 'type': 'bool',
             },
+            'aur_only': {
+                'default': False,
+                'type': 'bool',
+            },
         },
         required_one_of=[['name', 'upgrade']],
         supports_check_mode=True
@@ -237,9 +246,9 @@ def main():
         module.fail_json(msg="Upgrade cannot be used with this option.")
     else:
         if params['upgrade']:
-            upgrade(module, use)
+            upgrade(module, use, params['aur_only'])
         else:
-            install_packages(module, params['name'], use, params['skip_installed'])
+            install_packages(module, params['name'], use, params['skip_installed'], params['aur_only'])
 
 
 if __name__ == '__main__':
