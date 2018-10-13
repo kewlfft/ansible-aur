@@ -34,7 +34,7 @@ options:
         description:
             - The helper to use, 'auto' uses the first known helper found and makepkg as a fallback.
         default: auto
-        choices: [ auto, aurman, pacaur, trizen, pikaur, yay, makepkg ]
+        choices: [ auto, yay, aurman, pacaur, trizen, pikaur, makepkg ]
 
     skip_installed:
         description:
@@ -76,8 +76,8 @@ EXAMPLES = '''
 def_lang = ['env', 'LC_ALL=C']
 
 use_cmd = {
-    'aurman': ['aurman', '-S', '--noconfirm', '--noedit', '--needed', '--skip_news', '--pgp_fetch', '--skip_new_locations'],
     'yay': ['yay', '-S', '--noconfirm', '--needed'],
+    'aurman': ['aurman', '-S', '--noconfirm', '--noedit', '--needed', '--skip_news', '--pgp_fetch', '--skip_new_locations'],
     'pacaur': ['pacaur', '-S', '--noconfirm', '--noedit', '--needed'],
     'trizen': ['trizen', '-S', '--noconfirm', '--noedit', '--needed'],
     'pikaur': ['pikaur', '-S', '--noconfirm', '--noedit', '--needed'],
