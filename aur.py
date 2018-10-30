@@ -125,6 +125,7 @@ def install_with_makepkg(module, package):
     """
     Install the specified package with makepkg
     """
+    module.get_bin_path('fakeroot', required=True)
     f = open_url('https://aur.archlinux.org/rpc/?v=5&type=info&arg={}'.format(package))
     result = json.loads(f.read().decode('utf8'))
     if result['resultcount'] != 1:
