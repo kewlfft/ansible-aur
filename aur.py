@@ -76,7 +76,7 @@ EXAMPLES = '''
 def_lang = ['env', 'LC_ALL=C']
 
 use_cmd = {
-    'yay': ['yay', '-S', '--noconfirm', '--needed'],
+    'yay': ['yay', '-S', '--noconfirm', '--needed', '--cleanafter'],
     'aurman': ['aurman', '-S', '--noconfirm', '--noedit', '--needed', '--skip_news', '--pgp_fetch', '--skip_new_locations'],
     'pacaur': ['pacaur', '-S', '--noconfirm', '--noedit', '--needed'],
     'trizen': ['trizen', '-S', '--noconfirm', '--noedit', '--needed'],
