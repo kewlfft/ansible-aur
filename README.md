@@ -28,7 +28,7 @@ The following helpers are supported and automatically selected in the order they
 
 ## Installing
 ### AUR package
-The [aur-ansible-git](https://aur.archlinux.org/packages/ansible-aur-git) package is available in the AUR.
+The [ansible-aur-git](https://aur.archlinux.org/packages/ansible-aur-git) package is available in the AUR.
 Note the module is installed in `/usr/share/ansible/plugins/modules` which is one of the default module library paths.
 
 ### Manual installation
