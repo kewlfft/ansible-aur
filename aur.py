@@ -234,7 +234,7 @@ def main():
         use = 'makepkg'
         # auto: select the first helper for which the bin is found
         for k in use_cmd:
-            if module.get_bin_path(k, False):
+            if module.get_bin_path(k):
                 use = k
                 break
     else:
