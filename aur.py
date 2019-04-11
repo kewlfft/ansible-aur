@@ -129,7 +129,7 @@ def install_with_makepkg(module, package):
     f = open_url('https://aur.archlinux.org/rpc/?v=5&type=info&arg={}'.format(package))
     result = json.loads(f.read().decode('utf8'))
     if result['resultcount'] != 1:
-        return (1, '', 'package not found')
+        return (1, '', 'package %s not found' % (package))
     result = result['results'][0]
     f = open_url('https://aur.archlinux.org/{}'.format(result['URLPath']))
     current_path = os.getcwd()
