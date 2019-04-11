@@ -209,7 +209,7 @@ def main():
             },
             'use': {
                 'default': 'auto',
-                'choices': ['auto', 'aurman', 'pacaur', 'trizen', 'pikaur', 'yaourt', 'yay', 'makepkg'],
+                'choices': ['auto', 'aurman', 'pacaur', 'trizen', 'pikaur', 'yay', 'makepkg'],
             },
             'skip_installed': {
                 'default': False,
