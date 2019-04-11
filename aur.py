@@ -209,7 +209,7 @@ def main():
             },
             'use': {
                 'default': 'auto',
-                'choices': ['auto', 'aurman', 'pacaur', 'trizen', 'pikaur', 'yay', 'makepkg'],
+                'choices': ['auto'] + list(use_cmd.keys()),
             },
             'skip_installed': {
                 'default': False,
