@@ -109,7 +109,7 @@ def check_packages(module, packages):
     if would_be_changed:
         status = True
         if (len(packages) > 1):
-            message = '%s package(s) would be installed' % str(len(would_be_changed))
+            message = '{} package(s) would be installed'.format(len(would_be_changed))
         else:
             message = 'package would be installed'
     else:
@@ -129,7 +129,7 @@ def install_with_makepkg(module, package):
     f = open_url('https://aur.archlinux.org/rpc/?v=5&type=info&arg={}'.format(package))
     result = json.loads(f.read().decode('utf8'))
     if result['resultcount'] != 1:
-        return (1, '', 'package not found')
+        return (1, '', 'package {} not found'.format(package))
     result = result['results'][0]
     f = open_url('https://aur.archlinux.org/{}'.format(result['URLPath']))
     current_path = os.getcwd()
