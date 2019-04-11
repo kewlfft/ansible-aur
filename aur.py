@@ -184,10 +184,7 @@ def install_packages(module, packages, use, skip_installed, aur_only):
 
         changed_iter = changed_iter or not (out == '' or '-- skipping' in out or 'nothing to do' in out)
 
-    if changed_iter:
-        message = 'installed package(s)'
-    else:
-        message = 'package(s) already installed'
+    message = 'installed package(s)' if changed_iter else 'package(s) already installed'
 
     module.exit_json(
         changed=changed_iter,
