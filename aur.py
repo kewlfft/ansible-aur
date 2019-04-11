@@ -108,13 +108,13 @@ def check_packages(module, packages):
 
     if would_be_changed:
         status = True
-        if (len(packages) > 1):
-            message = '{} packages would be installed'.format(len(would_be_changed))
+        if len(packages) > 1:
+            message = '{} package(s) would be installed'.format(len(would_be_changed))
         else:
             message = 'package would be installed'
     else:
         status = False
-        if (len(packages) > 1):
+        if len(packages) > 1:
             message = 'all packages are already installed'
         else:
             message = 'package is already installed'
