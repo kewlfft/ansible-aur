@@ -1,14 +1,14 @@
 # Ansible AUR helper
 Ansible module to use some Arch User Repository (AUR) helpers as well as makepkg.
 
-The following helpers are supported and automatically selected in the order they are listed:
+The following helpers are supported and automatically selected, if present, in the order listed below:
 - [yay](https://github.com/Jguer/yay)
 - [aurman](https://github.com/polygamma/aurman)
 - [pacaur](https://github.com/rmarquis/pacaur)
 - [trizen](https://github.com/trizen/trizen)
 - [pikaur](https://github.com/actionless/pikaur)
 
-*makepkg* will be used if no helper was found or if it is explicitly specified.
+*makepkg* will be used if no helper was found or if it is explicitly specified:
 - [makepkg](https://wiki.archlinux.org/index.php/makepkg)
 
 ## Options
@@ -38,9 +38,9 @@ git clone https://github.com/kewlfft/ansible-aur.git ~/.ansible/plugins/modules/
 ```
 
 ## Usage
-### Note
-* This module aims to cover the AUR; for package removal or system upgrade with the repositories, it is recommended to use the official *pacman* module,
-* A package is reinstalled only if an update is available, using the *--needed* parameter.
+### Notes
+* This module aims to cover the AUR; for package removal or system upgrade with the repositories, it is recommended to use the official *pacman* module.
+* The *--needed* parameter of the helper is systematically used, it means if a package is up to date, it is not built and reinstalled.
 
 ### Examples
 Use it in a task, as in the following examples:
@@ -68,7 +68,7 @@ Use it in a task, as in the following examples:
 ```
 
 ### Create the "aur_builder" user
-While Ansible expects to SSH as root, AUR helpers do not allow executing operations as root, they all fail with "you cannot perform this operation as root". It is therefore recommended to create a user, that we will call for example *aur_builder*, that has no need for password with pacman in sudoers.
+While Ansible expects to SSH as root, AUR helpers do not allow executing operations as root, they all fail with "you cannot perform this operation as root". It is therefore recommended to create a user, let's call it *aur_builder*, that has no need for password with pacman in sudoers.
 This can be done in Ansible with the following actions:
 ```
 - user:
