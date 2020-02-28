@@ -1,0 +1,17 @@
+galaxy_info:
+  author: kewlfft
+  role_name: aur
+  description: Ansible module to use some Arch User Repository (AUR) helpers as well as makepkg.
+  license: GPL-3.0-or-later
+  min_ansible_version: 2.0
+
+  # https://galaxy.ansible.com/api/v1/platforms/
+  platforms:
+  - name: ArchLinux
+    versions:
+    - any
+
+  galaxy_tags:
+  - aur
+
+dependencies: []
