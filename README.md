@@ -37,6 +37,33 @@ Just clone the *ansible-aur* repository into your user custom-module directory:
 git clone https://github.com/kewlfft/ansible-aur.git ~/.ansible/plugins/modules/aur
 ```
 
+### Ansible Galaxy
+```
+ansible-galaxy install kewlfft.aur
+```
+
+Note that if this module is installed from Ansible Galaxy, you will need to list it explicitly in your playbook:
+```
+# playbook.yml
+- hosts: localhost
+  roles:
+  - kewlfft.aur
+  tasks:
+  - aur: name=package_name
+```
+
+or in your role:
+```
+# meta/main.yml
+dependencies:
+- kewlfft.aur
+```
+
+```
+# tasks/main.yml
+- aur: name=package_name
+```
+
 ## Usage
 ### Notes
 * This module aims to cover the AUR; for package removal or system upgrade with the repositories, it is recommended to use the official *pacman* module.
