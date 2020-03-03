@@ -38,6 +38,7 @@ git clone https://github.com/kewlfft/ansible-aur.git ~/.ansible/plugins/modules/
 ```
 
 ### Ansible Galaxy
+*ansible-aur* is available in Galaxy which is a hub for sharing Ansible content. To download it, use:
 ```
 ansible-galaxy install kewlfft.aur
 ```
@@ -66,7 +67,7 @@ dependencies:
 
 ## Usage
 ### Notes
-* This module aims to cover the AUR; for package removal or system upgrade with the repositories, it is recommended to use the official *pacman* module.
+* The scope of this module is installation and update from the AUR; for package removal or system upgrade from the official repositories, it is recommended to use the official *pacman* module.
 * The *--needed* parameter of the helper is systematically used, it means if a package is up to date, it is not built and reinstalled.
 
 ### Examples
