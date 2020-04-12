@@ -47,14 +47,14 @@ options:
         description:
             - Only valid with makepkg.
               Skip PGP signatures verification of source file.
-              This is useful when installing packages on a host without GnuPG (properly) configured.
+              This is useful when installing packages without GnuPG (properly) configured.
         type: bool
         default: no
 
     ignore_arch:
         description:
             - Only valid with makepkg.
-              Ignore a missing or incomplete arch field, useful when the PKGBUILD does no have the arch=('yourarch') field.
+              Ignore a missing or incomplete arch field, useful when the PKGBUILD does not have the arch=('yourarch') field.
         type: bool
         default: no
 
