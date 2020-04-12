@@ -25,6 +25,13 @@ options:
         description:
             - Name or list of names of the package(s) to install or upgrade.
 
+    ignore_arch:
+        description:
+            - Set to yes to skip architecture check.
+              Only valid with makepkg.
+        type: bool
+        default: no
+
     upgrade:
         description:
             - Whether or not to upgrade whole system.
@@ -145,6 +152,8 @@ def install_with_makepkg(module, package):
         os.chdir(format(result['Name']))
         if module.params['skip_pgp_check']:
             use_cmd['makepkg'].append('--skippgpcheck')
+        if module.params['ignore_arch']:
+            use_cmd['makepkg'].append('-A')
         rc, out, err = module.run_command(use_cmd['makepkg'], check_rc=True)
         os.chdir(current_path)
     return (rc, out, err)
@@ -200,6 +209,10 @@ def main():
         argument_spec={
             'name': {
                 'type': 'list',
+            },
+            'ignore_arch' : {
+                'default': False,
+                'type': 'bool',
             },
             'upgrade': {
                 'default': False,
