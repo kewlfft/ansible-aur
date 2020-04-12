@@ -25,13 +25,6 @@ options:
         description:
             - Name or list of names of the package(s) to install or upgrade.
 
-    ignore_arch:
-        description:
-            - Set to yes to skip architecture check.
-              Only valid with makepkg.
-        type: bool
-        default: no
-
     upgrade:
         description:
             - Whether or not to upgrade whole system.
@@ -52,9 +45,16 @@ options:
 
     skip_pgp_check:
         description:
-            - Skip verification of PGP signatures.
+            - Only valid with makepkg.
+              Skip PGP signatures verification of source file.
               This is useful when installing packages on a host without GnuPG (properly) configured.
-              Only valid with makepkg.
+        type: bool
+        default: no
+
+    ignore_arch:
+        description:
+            - Only valid with makepkg.
+              Ignore a missing or incomplete arch field, useful when the PKGBUILD does no have the arch=('yourarch') field.
         type: bool
         default: no
 
@@ -153,7 +153,7 @@ def install_with_makepkg(module, package):
         if module.params['skip_pgp_check']:
             use_cmd['makepkg'].append('--skippgpcheck')
         if module.params['ignore_arch']:
-            use_cmd['makepkg'].append('-A')
+            use_cmd['makepkg'].append('--ignorearch')
         rc, out, err = module.run_command(use_cmd['makepkg'], check_rc=True)
         os.chdir(current_path)
     return (rc, out, err)
@@ -210,7 +210,7 @@ def main():
             'name': {
                 'type': 'list',
             },
-            'ignore_arch' : {
+            'ignore_arch': {
                 'default': False,
                 'type': 'bool',
             },

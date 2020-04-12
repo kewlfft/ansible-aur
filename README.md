@@ -18,8 +18,9 @@ The following helpers are supported and automatically selected, if present, in t
 |upgrade        |no       |no      |yes, no                                            |Whether or not to upgrade whole system.|
 |use            |no       |auto    |auto, yay, aurman, pacaur, trizen, pikaur, makepkg |The helper to use, 'auto' uses the first known helper found and makepkg as a fallback.|
 |skip_installed |no       |no      |yes, no                                            |Skip operations if the package is present.|
-|skip_pgp_check |no       |no      |yes, no                                            |Skip verification of PGP signatures. This is useful when installing packages on a host without GnuPG (properly) configured. Only valid with makepkg.|
 |aur_only       |no       |no      |yes, no                                            |Limit operation to the AUR. Compatible with yay, aurman, pacaur and trizen.|
+|skip_pgp_check |no       |no      |yes, no                                            |Only valid with makepkg. Skip PGP signatures verification of source file, useful when installing packages on a host without GnuPG properly configured.|
+|ignore_arch    |no       |no      |yes, no                                            |Only valid with makepkg. Ignore a missing or incomplete arch field, useful when the PKGBUILD does no have the arch=('yourarch') field.|
 
 ### Note
 * Either *name* or *upgrade* is required, both cannot be used together.
