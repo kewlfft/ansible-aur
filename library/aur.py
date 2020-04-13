@@ -35,7 +35,7 @@ options:
         description:
             - The helper to use, 'auto' uses the first known helper found and makepkg as a fallback.
         default: auto
-        choices: [ auto, yay, aurman, pacaur, trizen, pikaur, makepkg ]
+        choices: [ auto, yay, pacaur, trizen, pikaur, aurman, makepkg ]
 
     skip_installed:
         description:
@@ -85,14 +85,14 @@ def_lang = ['env', 'LC_ALL=C']
 
 use_cmd = {
     'yay': ['yay', '-S', '--noconfirm', '--needed', '--cleanafter'],
-    'aurman': ['aurman', '-S', '--noconfirm', '--noedit', '--needed', '--skip_news', '--pgp_fetch', '--skip_new_locations'],
     'pacaur': ['pacaur', '-S', '--noconfirm', '--noedit', '--needed'],
     'trizen': ['trizen', '-S', '--noconfirm', '--noedit', '--needed'],
     'pikaur': ['pikaur', '-S', '--noconfirm', '--noedit', '--needed'],
+    'aurman': ['aurman', '-S', '--noconfirm', '--noedit', '--needed', '--skip_news', '--pgp_fetch', '--skip_new_locations'],
     'makepkg': ['makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
 }
 
-has_aur_option = ['yay', 'aurman', 'pacaur', 'trizen']
+has_aur_option = ['yay', 'pacaur', 'trizen', 'aurman']
 
 
 def package_installed(module, package):
