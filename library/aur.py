@@ -140,22 +140,15 @@ def install_with_makepkg(module, package):
         return (1, '', 'package {} not found'.format(package))
     result = result['results'][0]
     f = open_url('https://aur.archlinux.org/{}'.format(result['URLPath']))
-    current_path = os.getcwd()
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
-        tar_file = '{}.tar.gz'.format(result['Name'])
-        with open(tar_file, 'wb') as out:
-            out.write(f.read())
-        tar = tarfile.open(tar_file)
-        tar.extractall()
+        tar = tarfile.open(mode='r|*', fileobj=f)
+        tar.extractall(tmpdir)
         tar.close()
-        os.chdir(format(result['Name']))
         if module.params['skip_pgp_check']:
             use_cmd['makepkg'].append('--skippgpcheck')
         if module.params['ignore_arch']:
             use_cmd['makepkg'].append('--ignorearch')
-        rc, out, err = module.run_command(use_cmd['makepkg'], check_rc=True)
-        os.chdir(current_path)
+        rc, out, err = module.run_command(use_cmd['makepkg'], cwd=os.path.join(tmpdir, result['Name']), check_rc=True)
     return (rc, out, err)
 
 
