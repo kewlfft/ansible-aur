@@ -31,6 +31,12 @@ The following helpers are supported and automatically selected, if present, in t
 ### AUR package
 The [ansible-aur-git](https://aur.archlinux.org/packages/ansible-aur-git) package is available in the AUR.
 Note the module is installed in `/usr/share/ansible/plugins/modules` which is one of the default module library paths.
+Also note that the module will try to verify the GPG signature of the commit, so
+the signing key must be available in the user's keyring:
+
+```sh
+gpg --recv-keys 4AEE18F83AFDEB23 # GitHub (web-flow commit signing) <noreply@github.com>
+```
 
 ### Manual installation
 Just clone the *ansible-aur* repository into your user custom-module directory:
