@@ -108,11 +108,17 @@ def check_packages(module, packages):
     Inform the user what would change if the module were run
     """
     would_be_changed = []
+    diff = {
+        'before': '',
+        'after': '',
+    }
 
     for package in packages:
         installed = package_installed(module, package)
         if not installed:
             would_be_changed.append(package)
+            if module._diff:
+                diff['after'] += package + "\n"
 
     if would_be_changed:
         status = True
@@ -126,7 +132,7 @@ def check_packages(module, packages):
             message = 'all packages are already installed'
         else:
             message = 'package is already installed'
-    module.exit_json(changed=status, msg=message)
+    module.exit_json(changed=status, msg=message, diff=diff)
 
 
 def install_with_makepkg(module, package):
