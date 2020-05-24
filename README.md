@@ -15,7 +15,7 @@ The following helpers are supported and automatically selected, if present, in t
 |parameter      |required |default |choices                                            |comments|
 |---            |---      |---     |---                                                |---|
 |name           |no       |        |                                                   |Name or list of names of the package(s) to install or upgrade.|
-|state          |no       |present |present, latest                                    |Present skips operations if the package is present.|
+|state          |no       |present |present, latest                                    |Desired state of the package, 'present' skips operations if the package is installed.|
 |upgrade        |no       |no      |yes, no                                            |Whether or not to upgrade whole system.|
 |use            |no       |auto    |auto, yay, pacaur, trizen, pikaur, aurman, makepkg |The helper to use, 'auto' uses the first known helper found and makepkg as a fallback.|
 |aur_only       |no       |no      |yes, no                                            |Limit operation to the AUR. Compatible with yay, pacaur, aurman and trizen.|
