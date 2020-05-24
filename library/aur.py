@@ -182,7 +182,7 @@ def install_packages(module, packages, use, state, aur_only):
     changed_iter = False
 
     for package in packages:
-        if state == "present":
+        if state == 'present':
             if package_installed(module, package):
                 rc = 0
                 continue
