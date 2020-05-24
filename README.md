@@ -67,37 +67,12 @@ dependencies:
 
 ## Usage
 ### Notes
-* The scope of this module is installation and update from the AUR; for package removal or system upgrade from the official repositories, it is recommended to use the official *pacman* module.
-* The *--needed* parameter of the helper is systematically used, it means if a package is up to date, it is not built and reinstalled.
-
-### Examples
-Use it in a task, as in the following examples:
-```
-# Install trizen using makepkg, skip if trizen is already installed
-- aur: name=trizen use=makepkg state=present
-  become: yes
-  become_user: aur_builder
-
-# Install package_name using the first known helper found
-- aur: name=package_name
-  ...
-
-# Install package_name_1 and package_name_2 using trizen
-- aur:
-    use: trizen
-    name:
-      - package_name_1
-      - package_name_2
-  ...
-
-# Upgrade - using pacaur
-- aur: upgrade=yes use=pacaur
-  ...
-```
+* The scope of this module is installation and update from the AUR; for package removal or for updates from the repositories, it is recommended to use the official *pacman* module.
+* The *--needed* parameter of the helper is systematically used, it means if a package is up-to-date, it is not built and reinstalled.
 
 ### Create the "aur_builder" user
-While Ansible expects to SSH as root, AUR helpers do not allow executing operations as root, they all fail with "you cannot perform this operation as root". It is therefore recommended to create a user, let's call it *aur_builder*, that has no need for password with pacman in sudoers.
-This can be done in Ansible with the following actions:
+While Ansible expects to SSH as root, makepkg or AUR helpers do not allow executing operations as root, they fail with "you cannot perform this operation as root". It is therefore recommended to create a user, which is non-root but has no need for password with pacman in sudoers, let's call it *aur_builder*.
+This user can be created in Ansible with the following actions:
 ```
 - user:
     name: aur_builder
@@ -107,4 +82,28 @@ This can be done in Ansible with the following actions:
     line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
     create: yes
     validate: 'visudo -cf %s'
+```
+
+### Examples
+Use it in a task, as in the following examples:
+```
+# Install trizen using makepkg, skip if it is already installed
+- aur: name=trizen use=makepkg state=present
+  become: yes
+  become_user: aur_builder
+
+# Install package_name using the first known helper found
+- aur: name=package_name
+  become: yes
+  become_user: aur_builder
+
+# Install package_name_1 and package_name_2 using yay
+- aur:
+    use: yay
+    name:
+      - package_name_1
+      - package_name_2
+
+# Upgrade the system using yay, only act on AUR packages, note that dependency resolving will still include repository packages
+- aur: upgrade=yes use=yay aur_only=yes
 ```
