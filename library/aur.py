@@ -25,6 +25,12 @@ options:
         description:
             - Name or list of names of the package(s) to install or upgrade.
 
+    state:
+        description:
+            - Desired state of the package.
+        default: present
+        choices: [ present, latest ]
+
     upgrade:
         description:
             - Whether or not to upgrade whole system.
@@ -36,12 +42,6 @@ options:
             - The helper to use, 'auto' uses the first known helper found and makepkg as a fallback.
         default: auto
         choices: [ auto, yay, pacaur, trizen, pikaur, aurman, makepkg ]
-
-    skip_installed:
-        description:
-            - Skip operations if the package is present.
-        type: bool
-        default: no
 
     skip_pgp_check:
         description:
@@ -75,7 +75,7 @@ helper:
 
 EXAMPLES = '''
 - name: Install trizen using makepkg, skip if trizen is already installed
-  aur: name=trizen use=makepkg skip_installed=true
+  aur: name=trizen use=makepkg state=present
   become: yes
   become_user: aur_builder
 '''
@@ -173,7 +173,7 @@ def upgrade(module, use, aur_only):
     )
 
 
-def install_packages(module, packages, use, skip_installed, aur_only):
+def install_packages(module, packages, use, state, aur_only):
     """
     Install the specified packages
     """
@@ -182,7 +182,7 @@ def install_packages(module, packages, use, skip_installed, aur_only):
     changed_iter = False
 
     for package in packages:
-        if skip_installed:
+        if state == "present":
             if package_installed(module, package):
                 rc = 0
                 continue
@@ -209,6 +209,10 @@ def main():
             'name': {
                 'type': 'list',
             },
+            'state': {
+                'default': 'present',
+                'choices': ['present', 'latest'],
+            },
             'ignore_arch': {
                 'default': False,
                 'type': 'bool',
@@ -220,10 +224,6 @@ def main():
             'use': {
                 'default': 'auto',
                 'choices': ['auto'] + list(use_cmd.keys()),
-            },
-            'skip_installed': {
-                'default': False,
-                'type': 'bool',
             },
             'skip_pgp_check': {
                 'default': False,
@@ -253,13 +253,13 @@ def main():
     else:
         use = params['use']
 
-    if params['upgrade'] and (params['name'] or params['skip_installed'] or use == 'makepkg'):
+    if params['upgrade'] and (params['name'] or use == 'makepkg'):
         module.fail_json(msg="Upgrade cannot be used with this option.")
     else:
         if params['upgrade']:
             upgrade(module, use, params['aur_only'])
         else:
-            install_packages(module, params['name'], use, params['skip_installed'], params['aur_only'])
+            install_packages(module, params['name'], use, params['state'], params['aur_only'])
 
 
 if __name__ == '__main__':

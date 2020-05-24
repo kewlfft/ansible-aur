@@ -15,16 +15,15 @@ The following helpers are supported and automatically selected, if present, in t
 |parameter      |required |default |choices                                            |comments|
 |---            |---      |---     |---                                                |---|
 |name           |no       |        |                                                   |Name or list of names of the package(s) to install or upgrade.|
+|state          |no       |present |present, latest                                    |Present skips operations if the package is present.|
 |upgrade        |no       |no      |yes, no                                            |Whether or not to upgrade whole system.|
 |use            |no       |auto    |auto, yay, pacaur, trizen, pikaur, aurman, makepkg |The helper to use, 'auto' uses the first known helper found and makepkg as a fallback.|
-|skip_installed |no       |no      |yes, no                                            |Skip operations if the package is present.|
 |aur_only       |no       |no      |yes, no                                            |Limit operation to the AUR. Compatible with yay, pacaur, aurman and trizen.|
 |skip_pgp_check |no       |no      |yes, no                                            |Only valid with makepkg. Skip PGP signatures verification of source file, useful when installing packages without GnuPG properly configured.|
 |ignore_arch    |no       |no      |yes, no                                            |Only valid with makepkg. Ignore a missing or incomplete arch field, useful when the PKGBUILD does not have the arch=('yourarch') field.|
 
 ### Note
 * Either *name* or *upgrade* is required, both cannot be used together.
-* *skip_installed* cannot be used with *upgrade*.
 * In the *use*=*auto* mode, makepkg is used as a fallback if no known helper is found.
 
 ## Installing
@@ -75,7 +74,7 @@ dependencies:
 Use it in a task, as in the following examples:
 ```
 # Install trizen using makepkg, skip if trizen is already installed
-- aur: name=trizen use=makepkg skip_installed=true
+- aur: name=trizen use=makepkg state=present
   become: yes
   become_user: aur_builder
 
