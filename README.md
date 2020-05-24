@@ -13,7 +13,7 @@ The following helpers are supported and automatically selected, if present, in t
 
 ## Options
 |Parameter      |Choices/**Default**                                    |Comments|
-|---            |:---                                               |---|
+|---            |---                                                |---|
 |name           |                                                   |Name or list of names of the package(s) to install or upgrade.|
 |state          |**present**, latest                                    |Desired state of the package, 'present' skips operations if the package is already installed.|
 |upgrade        |yes, **no**                                            |Whether or not to upgrade whole system.|
