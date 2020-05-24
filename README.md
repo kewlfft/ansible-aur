@@ -12,7 +12,7 @@ The following helpers are supported and automatically selected, if present, in t
 - [makepkg](https://wiki.archlinux.org/index.php/makepkg)
 
 ## Options
-|parameter      |choices/**defaults**                                   |comments|
+|Parameter      |Choices/**Default**                                    |Comments|
 |---            |---                                                |---|
 |name           |                                                   |Name or list of names of the package(s) to install or upgrade.|
 |state          |**present**, latest                                    |Desired state of the package, 'present' skips operations if the package is already installed.|
