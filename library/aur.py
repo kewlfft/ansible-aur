@@ -60,7 +60,7 @@ options:
 
     aur_only:
         description:
-            - Limit operation to the AUR. Compatible with yay, aurman, pacaur and trizen.
+            - Limit helper operation to the AUR.
 notes:
   - When used with a `loop:` each package will be processed individually,
     it is much more efficient to pass the list directly to the `name` option.
@@ -92,7 +92,7 @@ use_cmd = {
     'makepkg': ['makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
 }
 
-has_aur_option = ['yay', 'pacaur', 'trizen', 'aurman']
+has_aur_option = ['yay', 'pacaur', 'trizen', 'pikaur', 'aurman']
 
 
 def package_installed(module, package):
