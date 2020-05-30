@@ -161,17 +161,25 @@ def build_command_prefix(use, extra_args, skip_pgp_check=False, ignore_arch=Fals
     return command
 
 
+def find_package_url(package):
+    return 'https://aur.archlinux.org/rpc/?v=5&type=info&arg={}'.format(urllib.parse.quote(package))
+
+
+def download_package_url(path):
+    return 'https://aur.archlinux.org/{}'.format(path)
+
+
 def install_with_makepkg(module, package, extra_args, skip_pgp_check, ignore_arch):
     """
     Install the specified package with makepkg
     """
     module.get_bin_path('fakeroot', required=True)
-    f = open_url('https://aur.archlinux.org/rpc/?v=5&type=info&arg={}'.format(urllib.parse.quote(package)))
+    f = open_url(find_package_url(package))
     result = json.loads(f.read().decode('utf8'))
     if result['resultcount'] != 1:
         return (1, '', 'package {} not found'.format(package))
     result = result['results'][0]
-    f = open_url('https://aur.archlinux.org/{}'.format(result['URLPath']))
+    f = open_url(download_package_url(result['URLPath']))
     with tempfile.TemporaryDirectory() as tmpdir:
         tar = tarfile.open(mode='r|*', fileobj=f)
         tar.extractall(tmpdir)
