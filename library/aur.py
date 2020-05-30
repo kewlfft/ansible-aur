@@ -35,7 +35,6 @@ options:
         description:
             - Whether or not to upgrade whole system.
         type: bool
-        default: no
 
     use:
         description:
@@ -61,6 +60,8 @@ options:
     aur_only:
         description:
             - Limit helper operation to the AUR.
+        type: bool
+        default: no
 notes:
   - When used with a `loop:` each package will be processed individually,
     it is much more efficient to pass the list directly to the `name` option.
@@ -79,7 +80,6 @@ EXAMPLES = '''
   become: yes
   become_user: aur_builder
 '''
-
 
 def_lang = ['env', 'LC_ALL=C']
 
@@ -213,12 +213,7 @@ def main():
                 'default': 'present',
                 'choices': ['present', 'latest'],
             },
-            'ignore_arch': {
-                'default': False,
-                'type': 'bool',
-            },
             'upgrade': {
-                'default': False,
                 'type': 'bool',
             },
             'use': {
@@ -229,19 +224,27 @@ def main():
                 'default': False,
                 'type': 'bool',
             },
+            'ignore_arch': {
+                'default': False,
+                'type': 'bool',
+            },
             'aur_only': {
                 'default': False,
                 'type': 'bool',
             },
         },
+        mutually_exclusive=[['name', 'upgrade']],
         required_one_of=[['name', 'upgrade']],
+        required_by={'use': ['skip_pgp_check', 'ignore_arch']},
         supports_check_mode=True
     )
 
     params = module.params
 
-    if module.check_mode:
-        check_packages(module, params['name'])
+    if params['use'] != 'makepkg' and params['skip_pgp_check']:
+        module.fail_json(msg="You must use 'makepkg' to use the 'skip_pgp_check' option.")
+    if params['use'] != 'makepkg' and params['ignore_arch']:
+        module.fail_json(msg="You must use 'makepkg' to use the 'ignore_arch' option.")
 
     if params['use'] == 'auto':
         use = 'makepkg'
@@ -253,13 +256,15 @@ def main():
     else:
         use = params['use']
 
-    if params['upgrade'] and (params['name'] or use == 'makepkg'):
-        module.fail_json(msg="Upgrade cannot be used with this option.")
+    if params.get('upgrade', False) and use == 'makepkg':
+        module.fail_json(msg="Upgrade cannot be used with the helper 'makepkg'.")
+
+    if module.check_mode:
+        check_packages(module, params['name'])
+    elif params.get('upgrade', False):
+        upgrade(module, use, params['aur_only'])
     else:
-        if params['upgrade']:
-            upgrade(module, use, params['aur_only'])
-        else:
-            install_packages(module, params['name'], use, params['state'], params['aur_only'])
+        install_packages(module, params['name'], use, params['state'], params['aur_only'])
 
 
 if __name__ == '__main__':
