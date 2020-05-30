@@ -218,7 +218,7 @@ def install_packages(module, packages, use, state, aur_only):
     )
 
 
-def main():
+def make_module():
     module = AnsibleModule(
         argument_spec={
             'name': {
@@ -274,12 +274,23 @@ def main():
     if params.get('upgrade', False) and use == 'makepkg':
         module.fail_json(msg="Upgrade cannot be used with the helper 'makepkg'.")
 
+    return module, use
+
+
+def apply_module(module, use):
+    params = module.params
+
     if module.check_mode:
         check_packages(module, params['name'])
     elif params.get('upgrade', False):
         upgrade(module, use, params['aur_only'])
     else:
         install_packages(module, params['name'], use, params['state'], params['aur_only'])
+
+
+def main():
+    module, use = make_module()
+    apply_module(module, use)
 
 
 if __name__ == '__main__':
