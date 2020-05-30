@@ -158,13 +158,26 @@ def install_with_makepkg(module, package):
     return (rc, out, err)
 
 
+def build_command_prefix(use, aur_only):
+    """
+    Create the prefix of a command that can be used by the install and upgrade functions.
+    """
+    command = def_lang + use_cmd[use]
+    if (aur_only and use in has_aur_option):
+        command.append('--aur')
+    return command
+
+
 def upgrade(module, use, aur_only):
     """
     Upgrade the whole system
     """
     assert use in use_cmd
 
-    rc, out, err = module.run_command(def_lang + use_cmd[use] + ['--aur' if (aur_only and use in has_aur_option) else None] + ['-u'], check_rc=True)
+    command = build_command_prefix(use, aur_only)
+    command.append('-u')
+
+    rc, out, err = module.run_command(command, check_rc=True)
 
     module.exit_json(
         changed=not (out == '' or 'nothing to do' in out or 'No AUR updates found' in out),
@@ -189,7 +202,9 @@ def install_packages(module, packages, use, state, aur_only):
         if use == 'makepkg':
             rc, out, err = install_with_makepkg(module, package)
         else:
-            rc, out, err = module.run_command(def_lang + use_cmd[use] + ['--aur' if (aur_only and use in has_aur_option) else None] + [package], check_rc=True)
+            command = build_command_prefix(use, aur_only)
+            command.append(package)
+            rc, out, err = module.run_command(command, check_rc=True)
 
         changed_iter = changed_iter or not (out == '' or '-- skipping' in out or 'nothing to do' in out)
 
