@@ -42,6 +42,14 @@ options:
         default: auto
         choices: [ auto, yay, pacaur, trizen, pikaur, aurman, makepkg ]
 
+    use_args:
+        description:
+            - Arguments to pass to the helper.
+              Requires that the 'use' option be set to something other than 'auto'.
+        type: list
+        elements: str
+        default: []
+
     skip_pgp_check:
         description:
             - Only valid with makepkg.
@@ -158,23 +166,24 @@ def install_with_makepkg(module, package):
     return (rc, out, err)
 
 
-def build_command_prefix(use, aur_only):
+def build_command_prefix(use, use_args, aur_only):
     """
     Create the prefix of a command that can be used by the install and upgrade functions.
     """
     command = def_lang + use_cmd[use]
     if (aur_only and use in has_aur_option):
         command.append('--aur')
+    command += use_args
     return command
 
 
-def upgrade(module, use, aur_only):
+def upgrade(module, use, use_args, aur_only):
     """
     Upgrade the whole system
     """
     assert use in use_cmd
 
-    command = build_command_prefix(use, aur_only)
+    command = build_command_prefix(use, use_args, aur_only)
     command.append('-u')
 
     rc, out, err = module.run_command(command, check_rc=True)
@@ -186,7 +195,7 @@ def upgrade(module, use, aur_only):
     )
 
 
-def install_packages(module, packages, use, state, aur_only):
+def install_packages(module, packages, use, use_args, state, aur_only):
     """
     Install the specified packages
     """
@@ -202,7 +211,7 @@ def install_packages(module, packages, use, state, aur_only):
         if use == 'makepkg':
             rc, out, err = install_with_makepkg(module, package)
         else:
-            command = build_command_prefix(use, aur_only)
+            command = build_command_prefix(use, use_args, aur_only)
             command.append(package)
             rc, out, err = module.run_command(command, check_rc=True)
 
@@ -235,6 +244,11 @@ def make_module():
                 'default': 'auto',
                 'choices': ['auto'] + list(use_cmd.keys()),
             },
+            'use_args': {
+                'type': 'list',
+                'elements': 'str',
+                'default': [],
+            },
             'skip_pgp_check': {
                 'default': False,
                 'type': 'bool',
@@ -250,11 +264,14 @@ def make_module():
         },
         mutually_exclusive=[['name', 'upgrade']],
         required_one_of=[['name', 'upgrade']],
-        required_by={'use': ['skip_pgp_check', 'ignore_arch']},
+        required_by={'use': ['use_args', 'skip_pgp_check', 'ignore_arch']},
         supports_check_mode=True
     )
 
     params = module.params
+
+    if params['use'] == 'auto' and params['use_args']:
+        module.fail_json(msg="You must specify a helper other than 'auto' to use the 'use_flags' option.")
 
     if params['use'] != 'makepkg' and params['skip_pgp_check']:
         module.fail_json(msg="You must use 'makepkg' to use the 'skip_pgp_check' option.")
@@ -283,9 +300,9 @@ def apply_module(module, use):
     if module.check_mode:
         check_packages(module, params['name'])
     elif params.get('upgrade', False):
-        upgrade(module, use, params['aur_only'])
+        upgrade(module, use, params['use_args'], params['aur_only'])
     else:
-        install_packages(module, params['name'], use, params['state'], params['aur_only'])
+        install_packages(module, params['name'], use, params['use_args'], params['state'], params['aur_only'])
 
 
 def main():
