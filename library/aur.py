@@ -174,7 +174,7 @@ def build_command_prefix(use, extra_args, skip_pgp_check=False, ignore_arch=Fals
         command.append('--skippgpcheck')
     if ignore_arch:
         command.append('--ignorearch')
-    if (aur_only and use in has_aur_option):
+    if aur_only and use in has_aur_option:
         command.append('--aur')
     if extra_args:
         command += shlex.split(extra_args)
