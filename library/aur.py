@@ -275,10 +275,8 @@ def make_module():
     if params['use'] == 'auto' and params['extra_args'] is not None:
         module.fail_json(msg="You must specify a tool other than 'auto' to use the 'extra_args' option.")
 
-    if params['use'] != 'makepkg' and params['skip_pgp_check']:
-        module.fail_json(msg="You must use 'makepkg' to use the 'skip_pgp_check' option.")
-    if params['use'] != 'makepkg' and params['ignore_arch']:
-        module.fail_json(msg="You must use 'makepkg' to use the 'ignore_arch' option.")
+    if params['use'] != 'makepkg' and (params['skip_pgp_check'] or params['ignore_arch']):
+        module.fail_json(msg="You must use 'makepkg' to use this option.")
 
     if params['use'] == 'auto':
         use = 'makepkg'
