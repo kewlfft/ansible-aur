@@ -17,7 +17,7 @@ The following helpers are supported and automatically selected, if present, in t
 |name           |                                                       |Name or list of names of the package(s) to install or upgrade.|
 |state          |**present**, latest                                    |Desired state of the package, 'present' skips operations if the package is already installed.|
 |upgrade        |yes, **no**                                            |Whether or not to upgrade whole system.|
-|use            |**auto**, yay, pacaur, trizen, pikaur, aurman, makepkg |The helper to use, 'auto' uses the first known helper found and makepkg as a fallback.|
+|use            |**auto**, yay, pacaur, trizen, pikaur, aurman, makepkg |The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.|
 |use_args       |[]                                                     |A list of arguments to pass directly to the used tool. Cannot be used unless use is set to something other than 'auto'.|
 |aur_only       |yes, **no**                                            |Limit helper operation to the AUR.|
 |skip_pgp_check |yes, **no**                                            |Only valid with makepkg. Skip PGP signatures verification of source file, useful when installing packages without GnuPG properly configured. Cannot be used unless use is set to something other than 'auto'.|

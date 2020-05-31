@@ -39,7 +39,7 @@ options:
 
     use:
         description:
-            - The helper to use, 'auto' uses the first known helper found and makepkg as a fallback.
+            - The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.
         default: auto
         choices: [ auto, yay, pacaur, trizen, pikaur, aurman, makepkg ]
 
@@ -272,7 +272,7 @@ def make_module():
     params = module.params
 
     if params['use'] == 'auto' and params['use_args']:
-        module.fail_json(msg="You must specify a helper other than 'auto' to use the 'use_flags' option.")
+        module.fail_json(msg="You must specify a tool other than 'auto' to use the 'use_flags' option.")
 
     if params['use'] != 'makepkg' and params['skip_pgp_check']:
         module.fail_json(msg="You must use 'makepkg' to use the 'skip_pgp_check' option.")
@@ -290,7 +290,7 @@ def make_module():
         use = params['use']
 
     if params.get('upgrade', False) and use == 'makepkg':
-        module.fail_json(msg="Upgrade cannot be used with the helper 'makepkg'.")
+        module.fail_json(msg="Upgrade cannot be used with the tool 'makepkg'.")
 
     return module, use
 
