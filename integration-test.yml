@@ -1,0 +1,27 @@
+---
+
+- hosts: 127.0.0.1
+  connection: local
+  tasks:
+    - name: Install yay using makepkg
+      aur:
+        name: yay
+        use: makepkg
+      become: yes
+      become_user: aur_builder
+
+    - name: Upgrade AUR packages
+      aur:
+        upgrade: yes
+        use: yay
+      become: yes
+      become_user: aur_builder
+
+    - name: Install pikaur using yay
+      aur:
+        name: pikaur
+        use: yay
+        use_args:
+        - --noprovides
+      become: yes
+      become_user: aur_builder
