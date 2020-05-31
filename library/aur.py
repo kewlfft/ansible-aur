@@ -56,6 +56,7 @@ options:
             - Only valid with makepkg.
               Skip PGP signatures verification of source file.
               This is useful when installing packages without GnuPG (properly) configured.
+              Cannot be used unless use is set to 'makepkg'.
         type: bool
         default: no
 
@@ -63,6 +64,7 @@ options:
         description:
             - Only valid with makepkg.
               Ignore a missing or incomplete arch field, useful when the PKGBUILD does not have the arch=('yourarch') field.
+              Cannot be used unless use is set to 'makepkg'.
         type: bool
         default: no
 
