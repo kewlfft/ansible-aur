@@ -267,7 +267,6 @@ def make_module():
         },
         mutually_exclusive=[['name', 'upgrade']],
         required_one_of=[['name', 'upgrade']],
-        required_by={'use': ['extra_args', 'skip_pgp_check', 'ignore_arch']},
         supports_check_mode=True
     )
 
