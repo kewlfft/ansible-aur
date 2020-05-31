@@ -146,7 +146,7 @@ def check_packages(module, packages):
     module.exit_json(changed=status, msg=message, diff=diff)
 
 
-def install_with_makepkg(module, package, skip_pgp_check, ignore_arch):
+def install_with_makepkg(module, package, use_args, skip_pgp_check, ignore_arch):
     """
     Install the specified package with makepkg
     """
@@ -161,7 +161,7 @@ def install_with_makepkg(module, package, skip_pgp_check, ignore_arch):
         tar = tarfile.open(mode='r|*', fileobj=f)
         tar.extractall(tmpdir)
         tar.close()
-        command = build_command_prefix('makepkg', [], skip_pgp_check=skip_pgp_check, ignore_arch=ignore_arch)
+        command = build_command_prefix('makepkg', use_args, skip_pgp_check=skip_pgp_check, ignore_arch=ignore_arch)
         rc, out, err = module.run_command(command, cwd=os.path.join(tmpdir, result['Name']), check_rc=True)
     return (rc, out, err)
 
@@ -213,7 +213,7 @@ def install_packages(module, packages, use, use_args, state, skip_pgp_check, ign
                 rc = 0
                 continue
         if use == 'makepkg':
-            rc, out, err = install_with_makepkg(module, package, skip_pgp_check, ignore_arch)
+            rc, out, err = install_with_makepkg(module, package, use_args, skip_pgp_check, ignore_arch)
         else:
             command = build_command_prefix(use, use_args, aur_only=aur_only)
             command.append(package)
