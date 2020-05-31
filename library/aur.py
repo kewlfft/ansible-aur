@@ -34,6 +34,7 @@ options:
     upgrade:
         description:
             - Whether or not to upgrade whole system.
+        default: no
         type: bool
 
     use:
