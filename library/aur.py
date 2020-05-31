@@ -146,7 +146,7 @@ def check_packages(module, packages):
     module.exit_json(changed=status, msg=message, diff=diff)
 
 
-def install_with_makepkg(module, package):
+def install_with_makepkg(module, package, skip_pgp_check, ignore_arch):
     """
     Install the specified package with makepkg
     """
@@ -161,19 +161,20 @@ def install_with_makepkg(module, package):
         tar = tarfile.open(mode='r|*', fileobj=f)
         tar.extractall(tmpdir)
         tar.close()
-        if module.params['skip_pgp_check']:
-            use_cmd['makepkg'].append('--skippgpcheck')
-        if module.params['ignore_arch']:
-            use_cmd['makepkg'].append('--ignorearch')
-        rc, out, err = module.run_command(use_cmd['makepkg'], cwd=os.path.join(tmpdir, result['Name']), check_rc=True)
+        command = build_command_prefix('makepkg', [], skip_pgp_check=skip_pgp_check, ignore_arch=ignore_arch)
+        rc, out, err = module.run_command(command, cwd=os.path.join(tmpdir, result['Name']), check_rc=True)
     return (rc, out, err)
 
 
-def build_command_prefix(use, use_args, aur_only):
+def build_command_prefix(use, use_args, skip_pgp_check=False, ignore_arch=False, aur_only=False):
     """
     Create the prefix of a command that can be used by the install and upgrade functions.
     """
     command = def_lang + use_cmd[use]
+    if skip_pgp_check:
+        command.append('--skippgpcheck')
+    if ignore_arch:
+        command.append('--ignorearch')
     if (aur_only and use in has_aur_option):
         command.append('--aur')
     command += use_args
@@ -186,7 +187,7 @@ def upgrade(module, use, use_args, aur_only):
     """
     assert use in use_cmd
 
-    command = build_command_prefix(use, use_args, aur_only)
+    command = build_command_prefix(use, use_args, aur_only=aur_only)
     command.append('-u')
 
     rc, out, err = module.run_command(command, check_rc=True)
@@ -198,7 +199,7 @@ def upgrade(module, use, use_args, aur_only):
     )
 
 
-def install_packages(module, packages, use, use_args, state, aur_only):
+def install_packages(module, packages, use, use_args, state, skip_pgp_check, ignore_arch, aur_only):
     """
     Install the specified packages
     """
@@ -212,9 +213,9 @@ def install_packages(module, packages, use, use_args, state, aur_only):
                 rc = 0
                 continue
         if use == 'makepkg':
-            rc, out, err = install_with_makepkg(module, package)
+            rc, out, err = install_with_makepkg(module, package, skip_pgp_check, ignore_arch)
         else:
-            command = build_command_prefix(use, use_args, aur_only)
+            command = build_command_prefix(use, use_args, aur_only=aur_only)
             command.append(package)
             rc, out, err = module.run_command(command, check_rc=True)
 
@@ -305,7 +306,7 @@ def apply_module(module, use):
     elif params.get('upgrade', False):
         upgrade(module, use, params['use_args'], params['aur_only'])
     else:
-        install_packages(module, params['name'], use, params['use_args'], params['state'], params['aur_only'])
+        install_packages(module, params['name'], use, params['use_args'], params['state'], params['skip_pgp_check'], params['ignore_arch'], params['aur_only'])
 
 
 def main():
