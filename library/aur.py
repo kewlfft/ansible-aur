@@ -145,6 +145,22 @@ def check_packages(module, packages):
     module.exit_json(changed=status, msg=message, diff=diff)
 
 
+def build_command_prefix(use, extra_args, skip_pgp_check=False, ignore_arch=False, aur_only=False):
+    """
+    Create the prefix of a command that can be used by the install and upgrade functions.
+    """
+    command = def_lang + use_cmd[use]
+    if skip_pgp_check:
+        command.append('--skippgpcheck')
+    if ignore_arch:
+        command.append('--ignorearch')
+    if aur_only and use in has_aur_option:
+        command.append('--aur')
+    if extra_args:
+        command += shlex.split(extra_args)
+    return command
+
+
 def install_with_makepkg(module, package, extra_args, skip_pgp_check, ignore_arch):
     """
     Install the specified package with makepkg
@@ -163,22 +179,6 @@ def install_with_makepkg(module, package, extra_args, skip_pgp_check, ignore_arc
         command = build_command_prefix('makepkg', extra_args, skip_pgp_check=skip_pgp_check, ignore_arch=ignore_arch)
         rc, out, err = module.run_command(command, cwd=os.path.join(tmpdir, result['Name']), check_rc=True)
     return (rc, out, err)
-
-
-def build_command_prefix(use, extra_args, skip_pgp_check=False, ignore_arch=False, aur_only=False):
-    """
-    Create the prefix of a command that can be used by the install and upgrade functions.
-    """
-    command = def_lang + use_cmd[use]
-    if skip_pgp_check:
-        command.append('--skippgpcheck')
-    if ignore_arch:
-        command.append('--ignorearch')
-    if aur_only and use in has_aur_option:
-        command.append('--aur')
-    if extra_args:
-        command += shlex.split(extra_args)
-    return command
 
 
 def upgrade(module, use, extra_args, aur_only):
@@ -273,10 +273,7 @@ def make_module():
     params = module.params
 
     if params['use'] == 'auto' and params['extra_args'] is not None:
-        module.fail_json(msg="You must specify a tool other than 'auto' to use the 'extra_args' option.")
-
-    if params['use'] != 'makepkg' and (params['skip_pgp_check'] or params['ignore_arch']):
-        module.fail_json(msg="You must use 'makepkg' to use this option.")
+        module.fail_json(msg="'extra_args' option cannot be used with 'auto', a tool must be specified.")
 
     if params['use'] == 'auto':
         use = 'makepkg'
@@ -288,8 +285,11 @@ def make_module():
     else:
         use = params['use']
 
+    if use != 'makepkg' and (params['skip_pgp_check'] or params['ignore_arch']):
+        module.fail_json(msg="This option is only available with 'makepkg'.")
+
     if params.get('upgrade', False) and use == 'makepkg':
-        module.fail_json(msg="Upgrade cannot be used with the tool 'makepkg'.")
+        module.fail_json(msg="The 'upgrade' action cannot be used with 'makepkg'.")
 
     return module, use
 
