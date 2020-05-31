@@ -272,18 +272,17 @@ def make_module():
 
     params = module.params
 
-    if params['use'] == 'auto' and params['extra_args'] is not None:
-        module.fail_json(msg="'extra_args' option cannot be used with 'auto', a tool must be specified.")
+    use = params['use']
 
-    if params['use'] == 'auto':
+    if use == 'auto':
+        if params['extra_args'] is not None:
+            module.fail_json(msg="'extra_args' cannot be used with 'auto', a tool must be specified.")
         use = 'makepkg'
         # auto: select the first helper for which the bin is found
         for k in use_cmd:
             if module.get_bin_path(k):
                 use = k
                 break
-    else:
-        use = params['use']
 
     if use != 'makepkg' and (params['skip_pgp_check'] or params['ignore_arch']):
         module.fail_json(msg="This option is only available with 'makepkg'.")
