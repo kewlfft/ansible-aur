@@ -181,6 +181,20 @@ def install_with_makepkg(module, package, extra_args, skip_pgp_check, ignore_arc
     return (rc, out, err)
 
 
+def check_upgrade(module, use):
+    """
+    Inform user how many packages would be upgraded
+    """
+    rc, stdout, stderr = module.run_command([use, '-Qu'], check_rc=True)
+    data = stdout.split('\n')
+    data.remove('')
+    module.exit_json(
+        changed=len(data) > 0,
+        msg="{} package(s) would be upgraded".format(len(data)),
+        helper=use,
+    )
+
+
 def upgrade(module, use, extra_args, aur_only):
     """
     Upgrade the whole system
@@ -296,12 +310,16 @@ def make_module():
 def apply_module(module, use):
     params = module.params
 
-    if module.check_mode:
-        check_packages(module, params['name'])
-    elif params.get('upgrade', False):
-        upgrade(module, use, params['extra_args'], params['aur_only'])
+    if params.get('upgrade', False):
+        if module.check_mode:
+            check_upgrade(module, use)
+        else:
+            upgrade(module, use, params['extra_args'], params['aur_only'])
     else:
-        install_packages(module, params['name'], use, params['extra_args'], params['state'], params['skip_pgp_check'], params['ignore_arch'], params['aur_only'])
+        if module.check_mode:
+            check_packages(module, params['name'])
+        else:
+            install_packages(module, params['name'], use, params['extra_args'], params['state'], params['skip_pgp_check'], params['ignore_arch'], params['aur_only'])
 
 
 def main():
