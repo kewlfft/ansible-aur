@@ -6,22 +6,24 @@ The following helpers are supported and automatically selected, if present, in t
 - [pacaur](https://github.com/E5ten/pacaur)
 - [trizen](https://github.com/trizen/trizen)
 - [pikaur](https://github.com/actionless/pikaur)
+- [pamac](https://gitlab.manjaro.org/applications/pamac)
 - [aurman](https://github.com/polygamma/aurman) (discontinued)
 
 *makepkg* will be used if no helper was found or if it is explicitly specified:
+
 - [makepkg](https://wiki.archlinux.org/index.php/makepkg)
 
 ## Options
-|Parameter      |Choices/**Default**                                    |Comments|
-|---            |---                                                    |---|
-|name           |                                                       |Name or list of names of the package(s) to install or upgrade.|
-|state          |**present**, latest                                    |Desired state of the package, 'present' skips operations if the package is already installed.|
-|upgrade        |yes, **no**                                            |Whether or not to upgrade whole system.|
-|use            |**auto**, yay, pacaur, trizen, pikaur, aurman, makepkg |The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.|
-|extra_args     |**null**                                               |A list of additional arguments to pass directly to the tool. Cannot be used in 'auto' mode.|
-|aur_only       |yes, **no**                                            |Limit helper operation to the AUR.|
-|skip_pgp_check |yes, **no**                                            |Only valid with makepkg. Skip PGP signatures verification of source file, useful when installing packages without GnuPG properly configured.|
-|ignore_arch    |yes, **no**                                            |Only valid with makepkg. Ignore a missing or incomplete arch field, useful when the PKGBUILD does not have the arch=('yourarch') field.|
+|Parameter      |Choices/**Default**                                           |Comments|
+|---            |---                                                           |---|
+|name           |                                                              |Name or list of names of the package(s) to install or upgrade.|
+|state          |**present**, latest                                           |Desired state of the package, 'present' skips operations if the package is already installed.|
+|upgrade        |yes, **no**                                                   |Whether or not to upgrade whole system.|
+|use            |**auto**, yay, pacaur, trizen, pikaur, pamac, aurman, makepkg |The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.|
+|extra_args     |**null**                                                      |A list of additional arguments to pass directly to the tool. Cannot be used in 'auto' mode.|
+|aur_only       |yes, **no**                                                   |Limit helper operation to the AUR.|
+|skip_pgp_check |yes, **no**                                                   |Only valid with makepkg. Skip PGP signatures verification of source file, useful when installing packages without GnuPG properly configured.|
+|ignore_arch    |yes, **no**                                                   |Only valid with makepkg. Ignore a missing or incomplete arch field, useful when the PKGBUILD does not have the arch=('yourarch') field.|
 
 ### Note
 * Either *name* or *upgrade* is required, both cannot be used together.
