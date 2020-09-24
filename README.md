@@ -31,7 +31,8 @@ The following helpers are supported and automatically selected, if present, in t
 ## Installing
 ### AUR package
 The [ansible-aur-git](https://aur.archlinux.org/packages/ansible-aur-git) package is available in the AUR.
-Note the module is installed in `/usr/share/ansible/plugins/modules` which is one of the default module library paths.
+
+Note: The module is installed in `/usr/share/ansible/plugins/modules` which is one of the default module library paths.
 
 ### Manual installation
 Just clone the *ansible-aur* repository into your user custom-module directory:
@@ -45,7 +46,7 @@ git clone https://github.com/kewlfft/ansible-aur.git ~/.ansible/plugins/modules/
 ansible-galaxy install kewlfft.aur
 ```
 
-Note that if this module is installed from Ansible Galaxy, you will need to list it explicitly in your playbook:
+Note: If this module is installed from Ansible Galaxy, you will need to list it explicitly in your playbook:
 ```
 # playbook.yml
 - hosts: localhost
@@ -107,7 +108,8 @@ Use it in a task, as in the following examples:
       - package_name_1
       - package_name_2
 
-# Upgrade the system using yay, only act on AUR packages, note that dependency resolving will still include repository packages
+# Upgrade the system using yay, only act on AUR packages.
+# Note: Dependency resolving will still include repository packages.
 - aur: upgrade=yes use=yay aur_only=yes
 
 # Install gnome-shell-extension-caffeine-git using pikaur and a local PKGBUILD.
