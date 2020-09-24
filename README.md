@@ -20,6 +20,7 @@ The following helpers are supported and automatically selected, if present, in t
 |use            |**auto**, yay, pacaur, trizen, pikaur, aurman, makepkg |The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.|
 |extra_args     |**null**                                               |A list of additional arguments to pass directly to the tool. Cannot be used in 'auto' mode.|
 |aur_only       |yes, **no**                                            |Limit helper operation to the AUR.|
+|local_pkgbuild |Local directory with PKGBUILD, **null**                |Only valid with makepkg or pikaur. Don't download the package from AUR. Build the package using a local PKGBUILD and the other build files.|
 |skip_pgp_check |yes, **no**                                            |Only valid with makepkg. Skip PGP signatures verification of source file, useful when installing packages without GnuPG properly configured.|
 |ignore_arch    |yes, **no**                                            |Only valid with makepkg. Ignore a missing or incomplete arch field, useful when the PKGBUILD does not have the arch=('yourarch') field.|
 
@@ -108,4 +109,14 @@ Use it in a task, as in the following examples:
 
 # Upgrade the system using yay, only act on AUR packages, note that dependency resolving will still include repository packages
 - aur: upgrade=yes use=yay aur_only=yes
+
+# Install gnome-shell-extension-caffeine-git using pikaur and a local PKGBUILD.
+# Skip if it is already installed
+- aur:
+    name: gnome-shell-extension-caffeine-git
+    use: pikaur
+    local_pkgbuild: {{ role_path }}/files/gnome-shell-extension-caffeine-git
+    state: present
+  become: yes
+  become_user: aur_builder
 ```

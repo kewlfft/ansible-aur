@@ -9,6 +9,7 @@ import shlex
 import tarfile
 import os
 import os.path
+import shutil
 import tempfile
 import urllib.parse
 
@@ -72,6 +73,14 @@ options:
             - Limit helper operation to the AUR.
         type: bool
         default: no
+
+    local_pkgbuild:
+        description:
+            - Only valid with makepkg or pikaur.
+              Directory with PKGBUILD and build files.
+              Cannot be used unless use is set to 'makepkg' or 'pikaur'.
+        type: path
+        default: no
 notes:
   - When used with a `loop:` each package will be processed individually,
     it is much more efficient to pass the list directly to the `name` option.
@@ -99,6 +108,11 @@ use_cmd = {
     'trizen': ['trizen', '-S', '--noconfirm', '--noedit', '--needed'],
     'pikaur': ['pikaur', '-S', '--noconfirm', '--noedit', '--needed'],
     'aurman': ['aurman', '-S', '--noconfirm', '--noedit', '--needed', '--skip_news', '--pgp_fetch', '--skip_new_locations'],
+    'makepkg': ['makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
+}
+
+use_cmd_local_pkgbuild = {
+    'pikaur': ['pikaur', '-P', '--noconfirm', '--noedit', '--needed', '--install'],
     'makepkg': ['makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
 }
 
@@ -145,39 +159,61 @@ def check_packages(module, packages):
     module.exit_json(changed=status, msg=message, diff=diff)
 
 
-def build_command_prefix(use, extra_args, skip_pgp_check=False, ignore_arch=False, aur_only=False):
+def build_command_prefix(use, extra_args, skip_pgp_check=False, ignore_arch=False, aur_only=False, local_pkgbuild=None):
     """
     Create the prefix of a command that can be used by the install and upgrade functions.
     """
-    command = def_lang + use_cmd[use]
+    if local_pkgbuild:
+        command = def_lang + use_cmd_local_pkgbuild[use]
+    else:
+        command = def_lang + use_cmd[use]
     if skip_pgp_check:
         command.append('--skippgpcheck')
     if ignore_arch:
         command.append('--ignorearch')
     if aur_only and use in has_aur_option:
         command.append('--aur')
+    if local_pkgbuild and use != 'makepkg':
+        command.append(local_pkgbuild)
     if extra_args:
         command += shlex.split(extra_args)
     return command
 
 
-def install_with_makepkg(module, package, extra_args, skip_pgp_check, ignore_arch):
+def install_with_makepkg(module, package, extra_args, skip_pgp_check, ignore_arch, local_pkgbuild=None):
     """
-    Install the specified package with makepkg
+    Install the specified package or a local PKGBUILD with makepkg
     """
-    module.get_bin_path('fakeroot', required=True)
-    f = open_url('https://aur.archlinux.org/rpc/?v=5&type=info&arg={}'.format(urllib.parse.quote(package)))
-    result = json.loads(f.read().decode('utf8'))
-    if result['resultcount'] != 1:
-        return (1, '', 'package {} not found'.format(package))
-    result = result['results'][0]
-    f = open_url('https://aur.archlinux.org/{}'.format(result['URLPath']))
+    if not local_pkgbuild:
+        module.get_bin_path('fakeroot', required=True)
+        f = open_url('https://aur.archlinux.org/rpc/?v=5&type=info&arg={}'.format(urllib.parse.quote(package)))
+        result = json.loads(f.read().decode('utf8'))
+        if result['resultcount'] != 1:
+            return (1, '', 'package {} not found'.format(package))
+        result = result['results'][0]
+        f = open_url('https://aur.archlinux.org/{}'.format(result['URLPath']))
     with tempfile.TemporaryDirectory() as tmpdir:
-        tar = tarfile.open(mode='r|*', fileobj=f)
-        tar.extractall(tmpdir)
-        tar.close()
-        command = build_command_prefix('makepkg', extra_args, skip_pgp_check=skip_pgp_check, ignore_arch=ignore_arch)
-        rc, out, err = module.run_command(command, cwd=os.path.join(tmpdir, result['Name']), check_rc=True)
+        if local_pkgbuild:
+            shutil.copytree(local_pkgbuild, tmpdir, dirs_exist_ok=True)
+            command = build_command_prefix('makepkg', extra_args)
+            rc, out, err = module.run_command(command, cwd=tmpdir, check_rc=True)
+        else:
+            tar = tarfile.open(mode='r|*', fileobj=f)
+            tar.extractall(tmpdir)
+            tar.close()
+            command = build_command_prefix('makepkg', extra_args, skip_pgp_check=skip_pgp_check, ignore_arch=ignore_arch)
+            rc, out, err = module.run_command(command, cwd=os.path.join(tmpdir, result['Name']), check_rc=True)
+    return (rc, out, err)
+
+
+def install_local_package(module, package, use, extra_args, local_pkgbuild):
+    """
+    Install the specified package with a local PKGBUILD
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        shutil.copytree(local_pkgbuild, tmpdir, dirs_exist_ok=True)
+        command = build_command_prefix(use, extra_args, local_pkgbuild=tmpdir + '/PKGBUILD')
+        rc, out, err = module.run_command(command, check_rc=True)
     return (rc, out, err)
 
 
@@ -213,11 +249,14 @@ def upgrade(module, use, extra_args, aur_only):
     )
 
 
-def install_packages(module, packages, use, extra_args, state, skip_pgp_check, ignore_arch, aur_only):
+def install_packages(module, packages, use, extra_args, state, skip_pgp_check, ignore_arch, aur_only, local_pkgbuild):
     """
     Install the specified packages
     """
-    assert use in use_cmd
+    if local_pkgbuild:
+        assert use in use_cmd_local_pkgbuild
+    else:
+        assert use in use_cmd
 
     changed_iter = False
 
@@ -227,7 +266,9 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
                 rc = 0
                 continue
         if use == 'makepkg':
-            rc, out, err = install_with_makepkg(module, package, extra_args, skip_pgp_check, ignore_arch)
+            rc, out, err = install_with_makepkg(module, package, extra_args, skip_pgp_check, ignore_arch, local_pkgbuild)
+        elif local_pkgbuild:
+            rc, out, err = install_local_package(module, package, use, extra_args, local_pkgbuild)
         else:
             command = build_command_prefix(use, extra_args, aur_only=aur_only)
             command.append(package)
@@ -278,6 +319,10 @@ def make_module():
                 'default': False,
                 'type': 'bool',
             },
+            'local_pkgbuild': {
+                'default': None,
+                'type': 'path',
+            },
         },
         mutually_exclusive=[['name', 'upgrade']],
         required_one_of=[['name', 'upgrade']],
@@ -301,6 +346,15 @@ def make_module():
     if use != 'makepkg' and (params['skip_pgp_check'] or params['ignore_arch']):
         module.fail_json(msg="This option is only available with 'makepkg'.")
 
+    if not (use in use_cmd_local_pkgbuild) and params['local_pkgbuild']:
+        module.fail_json(msg="This option is not available with '%s'" % use)
+
+    if params['local_pkgbuild'] and not os.path.isdir(params['local_pkgbuild']):
+        module.fail_json(msg="Directory %s not found" % (params['local_pkgbuild']))
+
+    if params['local_pkgbuild'] and not os.access(params['local_pkgbuild'] + '/PKGBUILD', os.R_OK):
+        module.fail_json(msg="PKGBUILD inside %s not readable" % (params['local_pkgbuild']))
+
     if params.get('upgrade', False) and use == 'makepkg':
         module.fail_json(msg="The 'upgrade' action cannot be used with 'makepkg'.")
 
@@ -319,7 +373,15 @@ def apply_module(module, use):
         if module.check_mode:
             check_packages(module, params['name'])
         else:
-            install_packages(module, params['name'], use, params['extra_args'], params['state'], params['skip_pgp_check'], params['ignore_arch'], params['aur_only'])
+            install_packages(module,
+                             params['name'],
+                             use,
+                             params['extra_args'],
+                             params['state'],
+                             params['skip_pgp_check'],
+                             params['ignore_arch'],
+                             params['aur_only'],
+                             params['local_pkgbuild'])
 
 
 def main():
