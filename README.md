@@ -20,6 +20,7 @@ The following helpers are supported and automatically selected, if present, in t
 |use            |**auto**, yay, pacaur, trizen, pikaur, aurman, makepkg |The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.|
 |extra_args     |**null**                                               |A list of additional arguments to pass directly to the tool. Cannot be used in 'auto' mode.|
 |aur_only       |yes, **no**                                            |Limit helper operation to the AUR.|
+|local_pkgbuild |Local directory with PKGBUILD, **null**                |Only valid with makepkg or pikaur. Don't download the package from AUR. Build the package using a local PKGBUILD and the other build files.|
 |skip_pgp_check |yes, **no**                                            |Only valid with makepkg. Skip PGP signatures verification of source file, useful when installing packages without GnuPG properly configured.|
 |ignore_arch    |yes, **no**                                            |Only valid with makepkg. Ignore a missing or incomplete arch field, useful when the PKGBUILD does not have the arch=('yourarch') field.|
 
@@ -30,7 +31,8 @@ The following helpers are supported and automatically selected, if present, in t
 ## Installing
 ### AUR package
 The [ansible-aur-git](https://aur.archlinux.org/packages/ansible-aur-git) package is available in the AUR.
-Note the module is installed in `/usr/share/ansible/plugins/modules` which is one of the default module library paths.
+
+Note: The module is installed in `/usr/share/ansible/plugins/modules` which is one of the default module library paths.
 
 ### Manual installation
 Just clone the *ansible-aur* repository into your user custom-module directory:
@@ -44,7 +46,7 @@ git clone https://github.com/kewlfft/ansible-aur.git ~/.ansible/plugins/modules/
 ansible-galaxy install kewlfft.aur
 ```
 
-Note that if this module is installed from Ansible Galaxy, you will need to list it explicitly in your playbook:
+Note: If this module is installed from Ansible Galaxy, you will need to list it explicitly in your playbook:
 ```
 # playbook.yml
 - hosts: localhost
@@ -106,6 +108,17 @@ Use it in a task, as in the following examples:
       - package_name_1
       - package_name_2
 
-# Upgrade the system using yay, only act on AUR packages, note that dependency resolving will still include repository packages
+# Upgrade the system using yay, only act on AUR packages.
+# Note: Dependency resolving will still include repository packages.
 - aur: upgrade=yes use=yay aur_only=yes
+
+# Install gnome-shell-extension-caffeine-git using pikaur and a local PKGBUILD.
+# Skip if it is already installed
+- aur:
+    name: gnome-shell-extension-caffeine-git
+    use: pikaur
+    local_pkgbuild: {{ role_path }}/files/gnome-shell-extension-caffeine-git
+    state: present
+  become: yes
+  become_user: aur_builder
 ```
