@@ -260,6 +260,7 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
 
     changed_iter = False
 
+    rc = 0
     for package in packages:
         if state == 'present':
             if package_installed(module, package):
