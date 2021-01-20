@@ -333,6 +333,9 @@ def make_module():
 
     use = params['use']
 
+    if params['name'] == []:
+        module.fail_json(msg="'name' cannot be empty.")
+
     if use == 'auto':
         if params['extra_args'] is not None:
             module.fail_json(msg="'extra_args' cannot be used with 'auto', a tool must be specified.")
