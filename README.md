@@ -3,6 +3,7 @@ Ansible module to use some Arch User Repository (AUR) helpers as well as makepkg
 
 The following helpers are supported and automatically selected, if present, in the order listed below:
 - [yay](https://github.com/Jguer/yay)
+- [paru](https://github.com/Morganamilo/paru)
 - [pacaur](https://github.com/E5ten/pacaur)
 - [trizen](https://github.com/trizen/trizen)
 - [pikaur](https://github.com/actionless/pikaur)
@@ -17,7 +18,7 @@ The following helpers are supported and automatically selected, if present, in t
 |name           |                                                       |Name or list of names of the package(s) to install or upgrade.|
 |state          |**present**, latest                                    |Desired state of the package, 'present' skips operations if the package is already installed.|
 |upgrade        |yes, **no**                                            |Whether or not to upgrade whole system.|
-|use            |**auto**, yay, pacaur, trizen, pikaur, aurman, makepkg |The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.|
+|use            |**auto**, yay, paru, pacaur, trizen, pikaur, aurman, makepkg |The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.|
 |extra_args     |**null**                                               |A list of additional arguments to pass directly to the tool. Cannot be used in 'auto' mode.|
 |aur_only       |yes, **no**                                            |Limit helper operation to the AUR.|
 |local_pkgbuild |Local directory with PKGBUILD, **null**                |Only valid with makepkg or pikaur. Don't download the package from AUR. Build the package using a local PKGBUILD and the other build files.|
