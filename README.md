@@ -81,6 +81,7 @@ This user can be created in an Ansible task with the following actions:
 ```
 - user:
     name: aur_builder
+    create_home: no
     group: wheel
 - lineinfile:
     path: /etc/sudoers.d/11-install-aur_builder
