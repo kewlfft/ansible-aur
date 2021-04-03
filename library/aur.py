@@ -90,7 +90,7 @@ RETURN = '''
 msg:
     description: action that has been taken
 helper:
-    the helper that was actually used
+    description: the helper that was actually used
 '''
 
 EXAMPLES = '''
