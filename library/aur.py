@@ -100,7 +100,7 @@ EXAMPLES = '''
   become_user: aur_builder
 '''
 
-def_lang = ['env', 'LC_ALL=C']
+def_lang = ['env', 'LC_ALL=C', 'LANGUAGE=C']
 
 use_cmd = {
     'yay': ['yay', '-S', '--noconfirm', '--needed', '--cleanafter'],
