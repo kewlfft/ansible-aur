@@ -244,7 +244,7 @@ def upgrade(module, use, extra_args, aur_only):
     rc, out, err = module.run_command(command, check_rc=True)
 
     module.exit_json(
-        changed=not (out == '' or 'othing to do' in out or 'No AUR updates found' in out),
+        changed=not (out == '' or 'nothing to do' in out.lower() or 'No AUR updates found' in out),
         msg='upgraded system',
         helper=use,
     )
@@ -275,7 +275,7 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
             command.append(package)
             rc, out, err = module.run_command(command, check_rc=True)
 
-        changed_iter = changed_iter or not (out == '' or '-- skipping' in out or 'othing to do' in out)
+        changed_iter = changed_iter or not (out == '' or '-- skipping' in out or 'nothing to do' in out.lower())
 
     message = 'installed package(s)' if changed_iter else 'package(s) already installed'
 
