@@ -100,7 +100,7 @@ EXAMPLES = '''
   become_user: aur_builder
 '''
 
-def_lang = ['env', 'LC_ALL=C']
+def_lang = ['env', 'LC_ALL=C', 'LANGUAGE=C']
 
 use_cmd = {
     'yay': ['yay', '-S', '--noconfirm', '--needed', '--cleanafter'],
@@ -244,7 +244,7 @@ def upgrade(module, use, extra_args, aur_only):
     rc, out, err = module.run_command(command, check_rc=True)
 
     module.exit_json(
-        changed=not (out == '' or 'nothing to do' in out or 'No AUR updates found' in out),
+        changed=not (out == '' or 'nothing to do' in out.lower() or 'No AUR updates found' in out),
         msg='upgraded system',
         helper=use,
     )
