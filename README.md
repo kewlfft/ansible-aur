@@ -67,7 +67,7 @@ This user can be created in an Ansible task with the following actions:
 - name: Create the `aur_builder` user
   ansible.builtin.user:
     name: aur_builder
-    create_home: no
+    create_home: yes
     group: wheel
 
 - name: Allow the `aur_builder` user to run `sudo pacman` without a password
