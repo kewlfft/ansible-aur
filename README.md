@@ -1,32 +1,57 @@
 # Ansible Collection - kewlfft.aur
 
 ## Description
+
 This collection includes an Ansible module to manage packages from the AUR.
 
-### Installation
-#### Install from Ansible Galaxy
+## Installation
+
+### Install the `kewlfft.aur` collection from Ansible Galaxy
+
 To install this collection from Ansible Galaxy run the following command:
-``` shell
+
+```shell
 ansible-galaxy collection install kewlfft.aur
 ```
 
 Alternatively, you can include the collection in a `requirements.yml` file and then run `ansible-galaxy collection install -r requirements.yml`. Here is an example `requirements.yml` file:
-``` yaml
+
+```yaml
 collections:
   - name: kewlfft.aur
 ```
 
-#### Install locally for development
+### Install the `kewlfft.aur` collection from the AUR
+
+The `kewlfft.aur` collection is also available in the AUR as the `ansible-collection-kewlfft-aur` package.
+
+### Install the `kewlfft.aur` collection locally for development
+
 If you want to test changes to the source code, run the following commands from the root of this git repository to locally build and install the collection:
-``` shell
+
+```shell
 ansible-galaxy collection build --force
 ansible-galaxy collection install --force "./kewlfft-aur-$(cat galaxy.yml | grep version: | awk '{print $2}').tar.gz"
 ```
 
+### Install the `aur` module as a local custom module
+
+Alternatively, you may manually install the `aur` module itself as a [local custom module](https://docs.ansible.com/ansible/latest/dev_guide/developing_locally.html) instead of installing the module through the `kewlfft.aur` Ansible collection. However, it is recommended to use `kewlfft.aur` collection unless you have a good reason not to. Here are the commands to install the `aur` module as a local custom module:
+
+```shell
+# Create the user custom module directory
+mkdir ~/.ansible/plugins/modules
+
+# Install the aur module into the user custom module directory
+curl -o ~/.ansible/plugins/modules/aur.py https://raw.githubusercontent.com/kewlfft/ansible-aur/master/plugins/modules/aur.py
+```
+
 ## kewlfft.aur.aur Module
+
 Ansible module to use some Arch User Repository (AUR) helpers as well as makepkg.
 
 The following helpers are supported and automatically selected, if present, in the order listed below:
+
 - [yay](https://github.com/Jguer/yay)
 - [paru](https://github.com/Morganamilo/paru)
 - [pacaur](https://github.com/E5ten/pacaur)
@@ -35,35 +60,42 @@ The following helpers are supported and automatically selected, if present, in t
 - [aurman](https://github.com/polygamma/aurman) (discontinued)
 
 *makepkg* will be used if no helper was found or if it is explicitly specified:
+
 - [makepkg](https://wiki.archlinux.org/index.php/makepkg)
 
 ### Options
-|Parameter      |Choices/**Default**                                          |Comments|
-|---            |---                                                          |---|
-|name           |                                                             |Name or list of names of the package(s) to install or upgrade.|
-|state          |**present**, latest                                          |Desired state of the package, 'present' skips operations if the package is already installed.|
-|upgrade        |yes, **no**                                                  |Whether or not to upgrade whole system.|
-|use            |**auto**, yay, paru, pacaur, trizen, pikaur, aurman, makepkg |The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.|
-|extra_args     |**null**                                                     |A list of additional arguments to pass directly to the tool. Cannot be used in 'auto' mode.|
-|aur_only       |yes, **no**                                                  |Limit helper operation to the AUR.|
-|local_pkgbuild |Local directory with PKGBUILD, **null**                      |Only valid with makepkg or pikaur. Don't download the package from AUR. Build the package using a local PKGBUILD and the other build files.|
-|skip_pgp_check |yes, **no**                                                  |Only valid with makepkg. Skip PGP signatures verification of source file, useful when installing packages without GnuPG properly configured.|
-|ignore_arch    |yes, **no**                                                  |Only valid with makepkg. Ignore a missing or incomplete arch field, useful when the PKGBUILD does not have the arch=('yourarch') field.|
+
+| Parameter      | Choices/**Default**                                          | Comments                                                                                                                                     |
+| -------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| name           |                                                              | Name or list of names of the package(s) to install or upgrade.                                                                               |
+| state          | **present**, latest                                          | Desired state of the package, 'present' skips operations if the package is already installed.                                                |
+| upgrade        | yes, **no**                                                  | Whether or not to upgrade whole system.                                                                                                      |
+| use            | **auto**, yay, paru, pacaur, trizen, pikaur, aurman, makepkg | The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.                                                         |
+| extra_args     | **null**                                                     | A list of additional arguments to pass directly to the tool. Cannot be used in 'auto' mode.                                                  |
+| aur_only       | yes, **no**                                                  | Limit helper operation to the AUR.                                                                                                           |
+| local_pkgbuild | Local directory with PKGBUILD, **null**                      | Only valid with makepkg or pikaur. Don't download the package from AUR. Build the package using a local PKGBUILD and the other build files.  |
+| skip_pgp_check | yes, **no**                                                  | Only valid with makepkg. Skip PGP signatures verification of source file, useful when installing packages without GnuPG properly configured. |
+| ignore_arch    | yes, **no**                                                  | Only valid with makepkg. Ignore a missing or incomplete arch field, useful when the PKGBUILD does not have the arch=('yourarch') field.      |
 
 #### Note
+
 * Either *name* or *upgrade* is required, both cannot be used together.
 * In the *use*=*auto* mode, makepkg is used as a fallback if no known helper is found.
 
 ### Usage
+
 #### Notes
+
 * The scope of this module is installation and update from the AUR; for package removal or for updates from the repositories, it is recommended to use the official *pacman* module.
 * The *--needed* parameter of the helper is systematically used, it means if a package is up-to-date, it is not built and reinstalled.
 
 #### Create the "aur_builder" user
+
 While Ansible expects to SSH as root, makepkg or AUR helpers do not allow executing operations as root, they fail with "you cannot perform this operation as root". It is therefore recommended to create a user, which is non-root but has no need for password with pacman in sudoers, let's call it *aur_builder*.
 
 This user can be created in an Ansible task with the following actions:
-``` yaml
+
+```yaml
 - name: Create the `aur_builder` user
   ansible.builtin.user:
     name: aur_builder
@@ -79,12 +111,20 @@ This user can be created in an Ansible task with the following actions:
 ```
 
 #### Fully Qualified Collection Names (FQCNs)
+
 In order to use an Ansible module that is distributed in a collection, you must use its FQCN (Fully Qualified Collection Name). A Fuly Qualified Collection Name is "the full definition of a module, plugin, or role hosted within a collection, in the form `namespace.collection.content_name`" ([Source](https://github.com/ansible-collections/overview#terminology)). In this case, the `aur` module resides in the `aur` collection which is under the `kewlfft` namespace, so its FQCN is `kewlfft.aur.aur`.
 
+Please note that this does not apply if you installed the `aur` module as a local custom module. Do to the nature of local custom modules, you can simply use the module's short name: `aur`.
+
 #### Examples
+
 Use it in a task, as in the following examples:
-``` yaml
-# This task does not use the `aur` module's FQCN. It will fail.
+
+```yaml
+# This task uses the module's short name instead of its FQCN.
+# Use the short name if you installed the module as a local custom module.
+# Otherwise, if you installed the module through the `kewlfft.aur` collection,
+this task will fail.
 - name: Install trizen using makepkg if it isn't installed already
   aur:
     name: trizen
