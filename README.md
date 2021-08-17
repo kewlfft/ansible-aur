@@ -63,7 +63,7 @@ The following helpers are supported and automatically selected, if present, in t
 While Ansible expects to SSH as root, makepkg or AUR helpers do not allow executing operations as root, they fail with "you cannot perform this operation as root". It is therefore recommended to create a user, which is non-root but has no need for password with pacman in sudoers, let's call it *aur_builder*.
 
 This user can be created in an Ansible task with the following actions:
-```
+``` yaml
 - name: Create the `aur_builder` user
   ansible.builtin.user:
     name: aur_builder
