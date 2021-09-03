@@ -49,7 +49,6 @@ curl -o ~/.ansible/plugins/modules/aur.py https://raw.githubusercontent.com/kewl
 ## kewlfft.aur.aur Module
 
 Ansible module to use some Arch User Repository (AUR) helpers as well as makepkg.
-
 The following helpers are supported and automatically selected, if present, in the order listed below:
 
 - [yay](https://github.com/Jguer/yay)
