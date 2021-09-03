@@ -112,7 +112,7 @@ This user can be created in an Ansible task with the following actions:
 
 #### Fully Qualified Collection Names (FQCNs)
 
-In order to use an Ansible module that is distributed in a collection, you must use its FQCN (Fully Qualified Collection Name). A Fuly Qualified Collection Name is "the full definition of a module, plugin, or role hosted within a collection, in the form `namespace.collection.content_name`" ([Source](https://github.com/ansible-collections/overview#terminology)). In this case, the `aur` module resides in the `aur` collection which is under the `kewlfft` namespace, so its FQCN is `kewlfft.aur.aur`.
+In order to use an Ansible module that is distributed in a collection, you must use its FQCN. This corresponds to "the full definition of a module, plugin, or role hosted within a collection, in the form `namespace.collection.content_name`" ([Source](https://github.com/ansible-collections/overview#terminology)). In this case, the `aur` module resides in the `aur` collection which is under the `kewlfft` namespace, so its FQCN is `kewlfft.aur.aur`.
 
 Please note that this does not apply if you installed the `aur` module as a local custom module. Do to the nature of local custom modules, you can simply use the module's short name: `aur`.
 
