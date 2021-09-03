@@ -8,13 +8,13 @@ This collection includes an Ansible module to manage packages from the AUR.
 
 ### Install the `kewlfft.aur` collection from Ansible Galaxy
 
-To install this collection from Ansible Galaxy run the following command:
+To install this collection from Ansible Galaxy, run the following command:
 
 ```shell
 ansible-galaxy collection install kewlfft.aur
 ```
 
-Alternatively, you can include the collection in a `requirements.yml` file and then run `ansible-galaxy collection install -r requirements.yml`. Here is an example `requirements.yml` file:
+Alternatively, you can include the collection in a `requirements.yml` file and then run `ansible-galaxy collection install -r requirements.yml`. Here is an example of `requirements.yml` file:
 
 ```yaml
 collections:
