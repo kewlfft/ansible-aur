@@ -121,10 +121,9 @@ Please note that this does not apply if you installed the `aur` module as a loca
 Use it in a task, as in the following examples:
 
 ```yaml
-# This task uses the module's short name instead of its FQCN.
+# This task uses the module's short name instead of its FQCN (Fully Qualified Collection Name).
 # Use the short name if you installed the module as a local custom module.
-# Otherwise, if you installed the module through the `kewlfft.aur` collection,
-# this task will fail.
+# Otherwise, if you installed the module through the `kewlfft.aur` collection, this task will fail.
 - name: Install trizen using makepkg if it isn't installed already
   aur:
     name: trizen
@@ -133,7 +132,7 @@ Use it in a task, as in the following examples:
   become: yes
   become_user: aur_builder
 
-# This task uses the `aur` module's FQCN (Fully Qualified Collection Name).
+# This task uses the `aur` module's FQCN.
 - name: Install trizen using makepkg if it isn't installed already
   kewlfft.aur.aur:
     name: trizen
