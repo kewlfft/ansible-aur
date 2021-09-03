@@ -122,8 +122,8 @@ Use it in a task, as in the following examples:
 
 ```yaml
 # This task uses the module's short name instead of its FQCN (Fully Qualified Collection Name).
-# Use the short name if you installed the module as a local custom module.
-# Otherwise, if you installed the module through the `kewlfft.aur` collection, this task will fail.
+# Use the short name if the module was installed as a local custom module.
+# Otherwise, if it was installed through the `kewlfft.aur` collection, this task will fail.
 - name: Install trizen using makepkg if it isn't installed already
   aur:
     name: trizen
