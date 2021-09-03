@@ -23,7 +23,7 @@ collections:
 
 ### Install the `kewlfft.aur` collection from the AUR
 
-The `kewlfft.aur` collection is also available in the AUR as the `ansible-collection-kewlfft-aur` package.
+The `kewlfft.aur` collection is also available in the AUR as the [`ansible-collection-kewlfft-aur`](https://aur.archlinux.org/packages/ansible-collection-kewlfft-aur/) package.
 
 ### Install the `kewlfft.aur` collection locally for development
 
