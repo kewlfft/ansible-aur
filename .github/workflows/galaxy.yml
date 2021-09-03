@@ -1,0 +1,55 @@
+---
+name: Build and Publish Collection to Ansible Galaxy
+
+'on':
+  release:
+    types: [ published ]
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: collections/ansible_collections/kewlfft/aur
+
+jobs:
+  release:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout git repo
+        uses: actions/checkout@v2
+        with:
+          path: collections/ansible_collections/kewlfft/aur
+
+      - name: Ensure that `version:` in `galaxy.yml` matches `GITHUB_REF`
+        id: version
+        run: |
+          [ "$(cat galaxy.yml | grep version: | awk '{print $2}')" = $(awk -F '/' '{print substr($3, 2)}' <<< ${GITHUB_REF}) ] || exit 1
+          echo ::set-output name=version::$(awk -F '/' '{print substr($3, 2)}' <<< ${GITHUB_REF})
+
+      - name: "Set up Python 3.9"
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+
+      - name: Generate cache keys
+        id: keys
+        run: |
+          echo ::set-output name=pip_cache_dir::$(pip cache dir)
+          # This ensures that the cache is invalidated after a week
+          echo ::set-output name=date::$(date +%Y_%g)
+
+      - name: Pip Cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.keys.outputs.pip_cache_dir }}
+          key: ansible-pip-${{ steps.keys.outputs.date }}
+
+      - name: Install pip packages
+        run: |
+          pip3 install -U pip
+          pip3 install wheel
+          pip3 install ansible-core
+
+      - name: Deploy collection
+        run: |
+          ansible-galaxy collection build
+          ansible-galaxy collection publish --api-key ${{ secrets.GALAXY_API_KEY }} "./kewlfft-aur-${{ steps.version.outputs.version }}.tar.gz"
