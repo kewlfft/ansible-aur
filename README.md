@@ -124,7 +124,7 @@ Use it in a task, as in the following examples:
 # This task uses the module's short name instead of its FQCN.
 # Use the short name if you installed the module as a local custom module.
 # Otherwise, if you installed the module through the `kewlfft.aur` collection,
-this task will fail.
+# this task will fail.
 - name: Install trizen using makepkg if it isn't installed already
   aur:
     name: trizen
