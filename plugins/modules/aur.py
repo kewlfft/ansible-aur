@@ -39,6 +39,12 @@ options:
         default: no
         type: bool
 
+    refresh:
+        description:
+            - Whether or not to refresh the package cache.
+        default: no
+        type: bool
+
     use:
         description:
             - The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.
@@ -160,7 +166,7 @@ def check_packages(module, packages):
     module.exit_json(changed=status, msg=message, diff=diff)
 
 
-def build_command_prefix(use, extra_args, skip_pgp_check=False, ignore_arch=False, aur_only=False, local_pkgbuild=None):
+def build_command_prefix(use, extra_args, skip_pgp_check=False, ignore_arch=False, aur_only=False, local_pkgbuild=None, refresh=False):
     """
     Create the prefix of a command that can be used by the install and upgrade functions.
     """
@@ -176,6 +182,8 @@ def build_command_prefix(use, extra_args, skip_pgp_check=False, ignore_arch=Fals
         command.append('--aur')
     if local_pkgbuild and use != 'makepkg':
         command.append(local_pkgbuild)
+    if refresh:
+        command.append('--y')
     if extra_args:
         command += shlex.split(extra_args)
     return command
@@ -232,13 +240,13 @@ def check_upgrade(module, use):
     )
 
 
-def upgrade(module, use, extra_args, aur_only):
+def upgrade(module, use, extra_args, aur_only, refresh):
     """
     Upgrade the whole system
     """
     assert use in use_cmd
 
-    command = build_command_prefix(use, extra_args, aur_only=aur_only)
+    command = build_command_prefix(use, extra_args, aur_only=aur_only, refresh=refresh)
     command.append('-u')
 
     rc, out, err = module.run_command(command, check_rc=True)
@@ -250,7 +258,7 @@ def upgrade(module, use, extra_args, aur_only):
     )
 
 
-def install_packages(module, packages, use, extra_args, state, skip_pgp_check, ignore_arch, aur_only, local_pkgbuild):
+def install_packages(module, packages, use, extra_args, state, skip_pgp_check, ignore_arch, aur_only, local_pkgbuild, refresh):
     """
     Install the specified packages
     """
@@ -271,7 +279,7 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
         elif local_pkgbuild:
             rc, out, err = install_local_package(module, package, use, extra_args, local_pkgbuild)
         else:
-            command = build_command_prefix(use, extra_args, aur_only=aur_only)
+            command = build_command_prefix(use, extra_args, aur_only=aur_only, refresh=refresh)
             command.append(package)
             rc, out, err = module.run_command(command, check_rc=True)
 
@@ -298,6 +306,10 @@ def make_module():
                 'choices': ['present', 'latest'],
             },
             'upgrade': {
+                'type': 'bool',
+            },
+            'refresh': {
+                'default': False,
                 'type': 'bool',
             },
             'use': {
@@ -385,7 +397,8 @@ def apply_module(module, use):
                              params['skip_pgp_check'],
                              params['ignore_arch'],
                              params['aur_only'],
-                             params['local_pkgbuild'])
+                             params['local_pkgbuild'],
+                             params['refresh'])
 
 
 def main():
