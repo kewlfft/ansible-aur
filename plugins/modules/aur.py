@@ -384,7 +384,7 @@ def apply_module(module, use):
         if module.check_mode:
             check_upgrade(module, use)
         else:
-            upgrade(module, use, params['extra_args'], params['aur_only'])
+            upgrade(module, use, params['extra_args'], params['aur_only'], params['refresh'])
     else:
         if module.check_mode:
             check_packages(module, params['name'])
