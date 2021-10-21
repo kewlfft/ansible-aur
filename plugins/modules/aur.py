@@ -183,7 +183,7 @@ def build_command_prefix(use, extra_args, skip_pgp_check=False, ignore_arch=Fals
     if local_pkgbuild and use != 'makepkg':
         command.append(local_pkgbuild)
     if refresh:
-        command.append('--refresh')
+        command.append('-y')
     if extra_args:
         command += shlex.split(extra_args)
     return command
@@ -247,7 +247,7 @@ def upgrade(module, use, extra_args, aur_only, refresh):
     assert use in use_cmd
 
     command = build_command_prefix(use, extra_args, aur_only=aur_only, refresh=refresh)
-    command.append('--upgrade')
+    command.append('-u')
 
     rc, out, err = module.run_command(command, check_rc=True)
 
