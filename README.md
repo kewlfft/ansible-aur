@@ -69,7 +69,7 @@ The following helpers are supported and automatically selected, if present, in t
 | name           |                                                              | Name or list of names of the package(s) to install or upgrade.                                                                               |
 | state          | **present**, latest                                          | Desired state of the package, 'present' skips operations if the package is already installed.                                                |
 | upgrade        | yes, **no**                                                  | Whether or not to upgrade whole system.                                                                                                      |
-| refresh        | yes, **no**                                                  | Whether or not to refresh the packages cache |
+| update_cache        | yes, **no**                                                  | Whether or not to refresh the packages cache |
 | use            | **auto**, yay, paru, pacaur, trizen, pikaur, aurman, makepkg | The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.                                                         |
 | extra_args     | **null**                                                     | A list of additional arguments to pass directly to the tool. Cannot be used in 'auto' mode.                                                  |
 | aur_only       | yes, **no**                                                  | Limit helper operation to the AUR.                                                                                                           |
