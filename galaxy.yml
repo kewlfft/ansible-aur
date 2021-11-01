@@ -8,7 +8,7 @@ namespace: kewlfft
 name: aur
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 0.9.1
+version: 0.10.0
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -66,4 +66,3 @@ issues: https://github.com/kewlfft/ansible-aur/issues
 # uses 'fnmatch' to match the files or directories. Some directories and files like 'galaxy.yml', '*.pyc', '*.retry',
 # and '.git' are always filtered
 build_ignore: []
-
