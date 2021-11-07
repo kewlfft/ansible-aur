@@ -97,12 +97,14 @@ This user can be created in an Ansible task with the following actions:
 
 ```yaml
 - name: Create the `aur_builder` user
+  become: yes
   ansible.builtin.user:
     name: aur_builder
     create_home: yes
     group: wheel
 
 - name: Allow the `aur_builder` user to run `sudo pacman` without a password
+  become: yes
   ansible.builtin.lineinfile:
     path: /etc/sudoers.d/11-install-aur_builder
     line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
