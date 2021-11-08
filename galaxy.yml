@@ -65,4 +65,6 @@ issues: https://github.com/kewlfft/ansible-aur/issues
 # artifact. A pattern is matched from the relative path of the file or directory of the collection directory. This
 # uses 'fnmatch' to match the files or directories. Some directories and files like 'galaxy.yml', '*.pyc', '*.retry',
 # and '.git' are always filtered
-build_ignore: []
+build_ignore:
+  - .github
+  - .gitignore
