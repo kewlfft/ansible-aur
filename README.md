@@ -109,6 +109,7 @@ This user can be created in an Ansible task with the following actions:
     path: /etc/sudoers.d/11-install-aur_builder
     line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
     create: yes
+    mode: 0644
     validate: 'visudo -cf %s'
 ```
 
