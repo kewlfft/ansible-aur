@@ -56,6 +56,7 @@ The following helpers are supported and automatically selected, if present, in t
 - [pacaur](https://github.com/E5ten/pacaur)
 - [trizen](https://github.com/trizen/trizen)
 - [pikaur](https://github.com/actionless/pikaur)
+- [aura](https://github.com/fosskers/aura)
 - [aurman](https://github.com/polygamma/aurman) (discontinued)
 
 *makepkg* will be used if no helper was found or if it is explicitly specified:
@@ -70,12 +71,12 @@ The following helpers are supported and automatically selected, if present, in t
 | state          | **present**, latest                                          | Desired state of the package, 'present' skips operations if the package is already installed.                                                |
 | upgrade        | yes, **no**                                                  | Whether or not to upgrade whole system.                                                                                                      |
 | update_cache        | yes, **no**                                                  | Whether or not to refresh the packages cache |
-| use            | **auto**, yay, paru, pacaur, trizen, pikaur, aurman, makepkg | The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.                                                         |
+| use            | **auto**, yay, paru, pacaur, trizen, pikaur, aura, aurman, makepkg | The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.                                                         |
 | extra_args     | **null**                                                     | A list of additional arguments to pass directly to the tool. Cannot be used in 'auto' mode.                                                  |
-| aur_only       | yes, **no**                                                  | Limit helper operation to the AUR.                                                                                                           |
+| aur_only       | yes, **no**                                                  | Limit helper operation to the AUR. Ignored with the aura helper, AUR is always used.                                                         |
 | local_pkgbuild | Local directory with PKGBUILD, **null**                      | Only valid with makepkg or pikaur. Don't download the package from AUR. Build the package using a local PKGBUILD and the other build files.  |
-| skip_pgp_check | yes, **no**                                                  | Only valid with makepkg. Skip PGP signatures verification of source file, useful when installing packages without GnuPG properly configured. |
-| ignore_arch    | yes, **no**                                                  | Only valid with makepkg. Ignore a missing or incomplete arch field, useful when the PKGBUILD does not have the arch=('yourarch') field.      |
+| skip_pgp_check | yes, **no**                                                  | Only valid with makepkg or aura. Skip PGP signatures verification of source file, useful when installing packages without GnuPG properly configured. |
+| ignore_arch    | yes, **no**                                                  | Only valid with makepkg or aura. Ignore a missing or incomplete arch field, useful when the PKGBUILD does not have the arch=('yourarch') field.      |
 
 #### Note
 
@@ -90,6 +91,8 @@ The following helpers are supported and automatically selected, if present, in t
 * The *--needed* parameter of the helper is systematically used, it means if a package is up-to-date, it is not built and reinstalled.
 
 #### Create the "aur_builder" user
+
+This is not needed if the aura helper is used since it must run as root.
 
 While Ansible expects to SSH as root, makepkg or AUR helpers do not allow executing operations as root, they fail with "you cannot perform this operation as root". It is therefore recommended to create a user, which is non-root but has no need for password with pacman in sudoers, let's call it *aur_builder*.
 
