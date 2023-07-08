@@ -25,10 +25,10 @@ jobs:
           [ "$(cat galaxy.yml | grep version: | awk '{print $2}')" = $(awk -F '/' '{print substr($3, 2)}' <<< ${GITHUB_REF}) ] || exit 1
           echo ::set-output name=version::$(awk -F '/' '{print substr($3, 2)}' <<< ${GITHUB_REF})
 
-      - name: "Set up Python 3.9"
+      - name: "Set up Python"
         uses: actions/setup-python@v2
         with:
-          python-version: "3.9"
+          python-version: "3.11"
 
       - name: Generate cache keys
         id: keys
