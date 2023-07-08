@@ -49,7 +49,7 @@ options:
         description:
             - The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.
         default: auto
-        choices: [ auto, yay, paru, pacaur, trizen, pikaur, aurman, makepkg ]
+        choices: [ auto, yay, paru, pacaur, trizen, pikaur, aura, aurman, makepkg ]
 
     extra_args:
         description:
@@ -59,24 +59,25 @@ options:
 
     skip_pgp_check:
         description:
-            - Only valid with makepkg.
+            - Only valid with makepkg and aura.
               Skip PGP signatures verification of source file.
               This is useful when installing packages without GnuPG (properly) configured.
-              Cannot be used unless use is set to 'makepkg'.
+              Cannot be used unless use is set to 'makepkg' or 'aura'.
         type: bool
         default: no
 
     ignore_arch:
         description:
-            - Only valid with makepkg.
+            - Only valid with makepkg and aura.
               Ignore a missing or incomplete arch field, useful when the PKGBUILD does not have the arch=('yourarch') field.
-              Cannot be used unless use is set to 'makepkg'.
+              Cannot be used unless use is set to 'makepkg' or 'aura'.
         type: bool
         default: no
 
     aur_only:
         description:
             - Limit helper operation to the AUR.
+              Ignored with the aura helper, AUR is always used.
         type: bool
         default: no
 
@@ -114,6 +115,7 @@ use_cmd = {
     'pacaur': ['pacaur', '-S', '--noconfirm', '--noedit', '--needed'],
     'trizen': ['trizen', '-S', '--noconfirm', '--noedit', '--needed'],
     'pikaur': ['pikaur', '-S', '--noconfirm', '--noedit', '--needed'],
+    'aura': ['aura', '-A', '--noconfirm', '--needed', '--clean', '--delmakedeps'],
     'aurman': ['aurman', '-S', '--noconfirm', '--noedit', '--needed', '--skip_news', '--pgp_fetch', '--skip_new_locations'],
     'makepkg': ['makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
 }
@@ -283,7 +285,7 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
             command.append(package)
             rc, out, err = module.run_command(command, check_rc=True)
 
-        changed_iter = changed_iter or not (out == '' or '-- skipping' in out or 'nothing to do' in out.lower())
+        changed_iter = changed_iter or not (out == '' or '-- skipping' in out or 'nothing to do' in out.lower() or 'no valid package' in out.lower())
 
     message = 'installed package(s)' if changed_iter else 'package(s) already installed'
 
@@ -359,10 +361,10 @@ def make_module():
                 use = k
                 break
 
-    if use != 'makepkg' and (params['skip_pgp_check'] or params['ignore_arch']):
-        module.fail_json(msg="This option is only available with 'makepkg'.")
+    if use not in ('makepkg', 'aura') and (params['skip_pgp_check'] or params['ignore_arch']):
+        module.fail_json(msg="This option is only available with 'makepkg' and 'aura'.")
 
-    if not (use in use_cmd_local_pkgbuild) and params['local_pkgbuild']:
+    if use not in use_cmd_local_pkgbuild and params['local_pkgbuild']:
         module.fail_json(msg="This option is not available with '%s'" % use)
 
     if params['local_pkgbuild'] and not os.path.isdir(params['local_pkgbuild']):
