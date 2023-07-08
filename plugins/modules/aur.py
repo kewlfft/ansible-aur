@@ -138,18 +138,8 @@ def check_packages(module, packages):
     """
     Inform the user what would change if the module were run
     """
-    would_be_changed = []
-    diff = {
-        'before': '',
-        'after': '',
-    }
-
-    for package in packages:
-        installed = package_installed(module, package)
-        if not installed:
-            would_be_changed.append(package)
-            if module._diff:
-                diff['after'] += package + "\n"
+    would_be_changed = [package for package in packages if not package_installed(module, package)]
+    diff = {'before': '', 'after': '\n'.join(package for package in would_be_changed if module._diff)}
 
     if would_be_changed:
         status = True
