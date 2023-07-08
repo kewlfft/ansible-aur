@@ -221,11 +221,10 @@ def check_upgrade(module, use):
     Inform user how many packages would be upgraded
     """
     rc, stdout, stderr = module.run_command([use, '-Qu'], check_rc=True)
-    data = stdout.split('\n')
-    data.remove('')
+    num_packages = sum(1 for line in stdout.splitlines() if line.strip())
     module.exit_json(
-        changed=len(data) > 0,
-        msg="{} package(s) would be upgraded".format(len(data)),
+        changed=num_packages > 0,
+        msg=f"{num_packages} package(s) would be upgraded",
         helper=use,
     )
 
@@ -260,10 +259,9 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
     changed_iter = False
 
     for package in packages:
-        if state == 'present':
-            if package_installed(module, package):
-                rc = 0
-                continue
+        if state == 'present' and package_installed(module, package):
+            rc = 0
+            continue
         if use == 'makepkg':
             rc, out, err = install_with_makepkg(module, package, extra_args, skip_pgp_check, ignore_arch, local_pkgbuild)
         elif local_pkgbuild:
