@@ -273,7 +273,7 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
             command.append(package)
             rc, out, err = module.run_command(command, check_rc=True)
 
-        changed_iter = changed_iter or not (out == '' or 'up-to-date -- skipping' in out or 'nothing to do' in out.lower())
+        changed_iter |= not (out == '' or 'up-to-date -- skipping' in out or 'nothing to do' in out.lower())
 
     message = 'installed package(s)' if changed_iter else 'package(s) already installed'
 
