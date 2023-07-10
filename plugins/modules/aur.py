@@ -251,6 +251,11 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
     """
     Install the specified packages
     """
+    diff = {
+        'before': '',
+        'after': '',
+    }
+
     if local_pkgbuild:
         assert use in use_cmd_local_pkgbuild
     else:
@@ -259,9 +264,12 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
     changed_iter = False
 
     for package in packages:
-        if state == 'present' and package_installed(module, package):
+        already_installed = package_installed(module, package)
+        if state == 'present' and already_installed:
             rc = 0
             continue
+        if module._diff and not already_installed:
+            diff['after'] += package + "\n"
         if use == 'makepkg':
             rc, out, err = install_with_makepkg(module, package, extra_args, skip_pgp_check, ignore_arch, local_pkgbuild)
         elif local_pkgbuild:
@@ -280,6 +288,7 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
         msg=message if not rc else err,
         helper=use,
         rc=rc,
+        diff=diff,
     )
 
 
