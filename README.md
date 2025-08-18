@@ -67,7 +67,7 @@ The following helpers are supported and automatically selected, if present, in t
 | Parameter      | Choices/**Default**                                          | Comments                                                                                                                                     |
 | -------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | name           |                                                              | Name or list of names of the package(s) to install or upgrade.                                                                               |
-| state          | **present**, latest                                          | Desired state of the package, 'present' skips operations if the package is already installed.                                                |
+| state          | **present**, latest, absent                                          | Desired state of the package, 'present' skips operations if the package is already installed.                                                |
 | upgrade        | yes, **no**                                                  | Whether or not to upgrade whole system.                                                                                                      |
 | update_cache        | yes, **no**                                                  | Whether or not to refresh the packages cache |
 | use            | **auto**, yay, paru, pacaur, trizen, pikaur, aurman, makepkg | The tool to use, 'auto' uses the first known helper found and makepkg as a fallback.                                                         |
@@ -167,4 +167,14 @@ Use it in a task, as in the following examples:
     state: present
   become: yes
   become_user: aur_builder
-```
+
+# Remove AUR packages (state=absent)
+- name: Remove package_name_1 and package_name_2 using yay
+  kewlfft.aur.aur:
+    use: yay
+    state: absent
+    name:
+      - package_name_1
+      - package_name_2
+  become: yes
+  become_user: aur_builder

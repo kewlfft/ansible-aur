@@ -31,7 +31,7 @@ options:
         description:
             - Desired state of the package.
         default: present
-        choices: [ present, latest ]
+        choices: [ present, latest, absent ]
 
     upgrade:
         description:
@@ -123,6 +123,15 @@ use_cmd_local_pkgbuild = {
     'makepkg': ['makepkg', '--syncdeps', '--install', '--noconfirm', '--needed']
 }
 
+use_remove_cmd = {
+    'yay': ['yay', '-R', '--noconfirm'],
+    'paru': ['paru', '-R', '--noconfirm'],
+    'pacaur': ['pacaur', '-R', '--noconfirm'],
+    'trizen': ['trizen', '-R', '--noconfirm'],
+    'pikaur': ['pikaur', '-R', '--noconfirm'],
+    'aurman': ['aurman', '-R', '--noconfirm'],
+}
+
 has_aur_option = ['yay', 'paru', 'pacaur', 'trizen', 'pikaur', 'aurman']
 
 
@@ -153,6 +162,28 @@ def check_packages(module, packages):
             message = 'all packages are already installed'
         else:
             message = 'package is already installed'
+    module.exit_json(changed=status, msg=message, diff=diff)
+
+
+def check_packages_absent(module, packages):
+    """
+    Inform the user what would change if the module were run with state=absent
+    """
+    would_be_changed = [package for package in packages if package_installed(module, package)]
+    diff = {'before': '\n'.join(pkg for pkg in would_be_changed if module._diff), 'after': ''}
+
+    if would_be_changed:
+        status = True
+        if len(packages) > 1:
+            message = '{} package(s) would be removed'.format(len(would_be_changed))
+        else:
+            message = 'package would be removed'
+    else:
+        status = False
+        if len(packages) > 1:
+            message = 'all packages are already absent'
+        else:
+            message = 'package is already absent'
     module.exit_json(changed=status, msg=message, diff=diff)
 
 
@@ -283,6 +314,44 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
     )
 
 
+def remove_packages(module, packages, use, extra_args):
+    """
+    Remove the specified packages
+    """
+    # Determine the base command. If a helper other than makepkg is selected, use it.
+    # If use is 'makepkg' (which has no remove capability), fallback to pacman directly.
+    def base_remove_cmd(selected_use):
+        if selected_use == 'makepkg':
+            return def_lang + ['pacman', '-R', '--noconfirm'], 'pacman'
+        else:
+            assert selected_use in use_remove_cmd
+            return def_lang + use_remove_cmd[selected_use], selected_use
+
+    changed_iter = False
+    rc = 0
+    used_helper = use
+
+    for package in packages:
+        if not package_installed(module, package):
+            continue
+        command, helper = base_remove_cmd(use)
+        used_helper = helper
+        if extra_args:
+            command += shlex.split(extra_args)
+        command.append(package)
+        rc, out, err = module.run_command(command, check_rc=True)
+        changed_iter |= (rc == 0)
+
+    message = 'removed package(s)' if changed_iter else 'package(s) already absent'
+
+    module.exit_json(
+        changed=changed_iter,
+        msg=message if not rc else err,
+        helper=used_helper,
+        rc=rc,
+    )
+
+
 def make_module():
     module = AnsibleModule(
         argument_spec={
@@ -291,7 +360,7 @@ def make_module():
             },
             'state': {
                 'default': 'present',
-                'choices': ['present', 'latest'],
+                'choices': ['present', 'latest', 'absent'],
             },
             'upgrade': {
                 'type': 'bool',
@@ -375,18 +444,27 @@ def apply_module(module, use):
             upgrade(module, use, params['extra_args'], params['aur_only'], params['update_cache'])
     else:
         if module.check_mode:
-            check_packages(module, params['name'])
+            if params['state'] == 'absent':
+                check_packages_absent(module, params['name'])
+            else:
+                check_packages(module, params['name'])
         else:
-            install_packages(module,
-                             params['name'],
-                             use,
-                             params['extra_args'],
-                             params['state'],
-                             params['skip_pgp_check'],
-                             params['ignore_arch'],
-                             params['aur_only'],
-                             params['local_pkgbuild'],
-                             params['update_cache'])
+            if params['state'] == 'absent':
+                remove_packages(module,
+                                params['name'],
+                                use,
+                                params['extra_args'])
+            else:
+                install_packages(module,
+                                 params['name'],
+                                 use,
+                                 params['extra_args'],
+                                 params['state'],
+                                 params['skip_pgp_check'],
+                                 params['ignore_arch'],
+                                 params['aur_only'],
+                                 params['local_pkgbuild'],
+                                 params['update_cache'])
 
 
 def main():
