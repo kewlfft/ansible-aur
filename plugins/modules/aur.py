@@ -97,6 +97,14 @@ msg:
     description: action that has been taken
 helper:
     description: the helper that was actually used
+installed:
+    description: list of packages that were newly installed
+    returned: always
+    type: list
+updated:
+    description: list of packages that were upgraded
+    returned: always
+    type: list
 '''
 
 EXAMPLES = '''
@@ -287,10 +295,12 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
     else:
         assert use in use_cmd
 
-    changed_iter = False
+    installed_pkgs = []
+    updated_pkgs = []
 
     for package in packages:
-        if state == 'present' and package_installed(module, package):
+        was_installed = package_installed(module, package)
+        if state == 'present' and was_installed:
             rc = 0
             continue
         if use == 'makepkg':
@@ -302,7 +312,14 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
             command.append(package)
             rc, out, err = module.run_command(command, check_rc=True)
 
-        changed_iter |= not (out == '' or 'up-to-date -- skipping' in out or 'nothing to do' in out.lower())
+        changed_pkg = not (out == '' or 'up-to-date -- skipping' in out or 'nothing to do' in out.lower())
+        if changed_pkg:
+            if was_installed:
+                updated_pkgs.append(package)
+            else:
+                installed_pkgs.append(package)
+
+    changed_iter = bool(installed_pkgs or updated_pkgs)
 
     message = 'installed package(s)' if changed_iter else 'package(s) already installed'
 
@@ -311,6 +328,8 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
         msg=message if not rc else err,
         helper=use,
         rc=rc,
+        installed=installed_pkgs,
+        updated=updated_pkgs,
     )
 
 
