@@ -25,18 +25,6 @@ jobs:
           [ "$(cat galaxy.yml | grep version: | awk '{print $2}')" = $(awk -F '/' '{print substr($3, 2)}' <<< ${GITHUB_REF}) ] || exit 1
           echo "version=$(awk -F '/' '{print substr($3, 2)}' <<< ${GITHUB_REF})" >> $GITHUB_OUTPUT
 
-      - name: "Set up Python"
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-          cache: 'pip'
-
-      - name: Install pip packages
-        run: |
-          pip3 install -U pip
-          pip3 install wheel
-          pip3 install ansible-core
-
       - name: Deploy collection
         run: |
           ansible-galaxy collection build
