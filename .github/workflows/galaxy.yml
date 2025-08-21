@@ -23,7 +23,7 @@ jobs:
         id: version
         run: |
           [ "$(cat galaxy.yml | grep version: | awk '{print $2}')" = $(awk -F '/' '{print substr($3, 2)}' <<< ${GITHUB_REF}) ] || exit 1
-          echo ::set-output name=version::$(awk -F '/' '{print substr($3, 2)}' <<< ${GITHUB_REF})
+          echo "version=$(awk -F '/' '{print substr($3, 2)}' <<< ${GITHUB_REF})" >> $GITHUB_OUTPUT
 
       - name: "Set up Python"
         uses: actions/setup-python@v5
