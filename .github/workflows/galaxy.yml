@@ -28,4 +28,4 @@ jobs:
       - name: Deploy collection
         run: |
           ansible-galaxy collection build
-          ansible-galaxy collection publish --api-key ${{ secrets.GALAXY_API_KEY }} "./kewlfft-aur-${{ steps.version.outputs.version }}.tar.gz"
+          ansible-galaxy collection publish --api-key ${{ secrets.ANSIBLE_GALAXY_API_KEY }} "./kewlfft-aur-${{ steps.version.outputs.version }}.tar.gz"
