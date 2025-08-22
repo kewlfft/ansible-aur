@@ -36,6 +36,7 @@ jobs:
 
       - name: Publish collection
         run: |
-          tarball="kewlfft-aur-${{ steps.version.outputs.version }}.tar.gz"
+          tarball=$(ls kewlfft-aur-*.tar.gz | head -n1)
+          echo "📦 Publishing $tarball ..."
           ansible-galaxy collection publish "$tarball" \
             --api-key "${{ secrets.ANSIBLE_GALAXY_API_KEY }}"
