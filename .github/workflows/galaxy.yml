@@ -1,9 +1,8 @@
----
 name: Build and Publish Collection to Ansible Galaxy
 
-'on':
+on:
   release:
-    types: [ published ]
+    types: [published]
   workflow_dispatch:
 
 defaults:
@@ -14,7 +13,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout git repo
+      - name: Checkout repo
         uses: actions/checkout@v5
         with:
           path: collections/ansible_collections/kewlfft/aur
@@ -36,5 +35,7 @@ jobs:
         run: ansible-galaxy collection build
 
       - name: Publish collection
-        run: ansible-galaxy collection publish "kewlfft-aur-${{ steps.version.outputs.version }}.tar.gz" \
-              --api-key "${{ secrets.ANSIBLE_GALAXY_API_KEY }}"
+        run: |
+          tarball="kewlfft-aur-${{ steps.version.outputs.version }}.tar.gz"
+          ansible-galaxy collection publish "$tarball" \
+            --api-key "${{ secrets.ANSIBLE_GALAXY_API_KEY }}"
