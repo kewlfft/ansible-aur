@@ -19,7 +19,6 @@ jobs:
           path: collections/ansible_collections/kewlfft/aur
 
       - name: Verify version in galaxy.yml matches release tag
-        id: version
         run: |
           tag_version="${GITHUB_REF##*/}"   # strip refs/tags/
           file_version=$(awk '/^version:/ {print $2}' galaxy.yml)
@@ -29,22 +28,26 @@ jobs:
             exit 1
           fi
 
-          echo "version=$tag_version" >> "$GITHUB_OUTPUT"
-
       - name: Build collection
-        id: build
         run: |
           path=$(ansible-galaxy collection build | awk '/Created collection/ {print $NF}')
-          echo "tarball=$path" >> "$GITHUB_OUTPUT"
+          echo "TARBALL=$path" >> $GITHUB_ENV
+          echo "📦 Built collection at $path"
 
       - name: Upload built collection artifact
         uses: actions/upload-artifact@v4
         with:
           name: ansible-collection-tarball
-          path: ${{ steps.build.outputs.tarball }}
+          path: ${{ env.TARBALL }}
+
+      - name: Debug tarball before publish
+        run: |
+          echo "🔎 Checking tarball path..."
+          echo "TARBALL=$TARBALL"
+          ls -l "$(dirname "$TARBALL")"
 
       - name: Publish collection
         run: |
-          echo "📦 Publishing ${{ steps.build.outputs.tarball }} ..."
-          ansible-galaxy collection publish "${{ steps.build.outputs.tarball }}" \
+          echo "📤 Publishing $TARBALL ..."
+          ansible-galaxy collection publish "$TARBALL" \
             --api-key "${{ secrets.ANSIBLE_GALAXY_API_KEY }}"
