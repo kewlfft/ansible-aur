@@ -34,9 +34,15 @@ jobs:
       - name: Build collection
         run: ansible-galaxy collection build
 
+      - name: Upload built collection artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ansible-collection-tarball
+          path: kewlfft-aur-*.tar.gz
+
       - name: Publish collection
         run: |
-          tarball=$(ls kewlfft-aur-*.tar.gz | head -n1)
+          tarball=$(realpath kewlfft-aur-*.tar.gz)
           echo "📦 Publishing $tarball ..."
           ansible-galaxy collection publish "$tarball" \
             --api-key "${{ secrets.ANSIBLE_GALAXY_API_KEY }}"
