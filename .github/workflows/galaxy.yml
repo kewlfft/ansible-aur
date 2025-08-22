@@ -32,17 +32,19 @@ jobs:
           echo "version=$tag_version" >> "$GITHUB_OUTPUT"
 
       - name: Build collection
-        run: ansible-galaxy collection build
+        id: build
+        run: |
+          path=$(ansible-galaxy collection build | awk '/Created collection/ {print $NF}')
+          echo "tarball=$path" >> "$GITHUB_OUTPUT"
 
       - name: Upload built collection artifact
         uses: actions/upload-artifact@v4
         with:
           name: ansible-collection-tarball
-          path: kewlfft-aur-*.tar.gz
+          path: ${{ steps.build.outputs.tarball }}
 
       - name: Publish collection
         run: |
-          tarball=$(realpath kewlfft-aur-*.tar.gz)
-          echo "📦 Publishing $tarball ..."
-          ansible-galaxy collection publish "$tarball" \
+          echo "📦 Publishing ${{ steps.build.outputs.tarball }} ..."
+          ansible-galaxy collection publish "${{ steps.build.outputs.tarball }}" \
             --api-key "${{ secrets.ANSIBLE_GALAXY_API_KEY }}"
