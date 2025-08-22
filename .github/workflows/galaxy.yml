@@ -19,13 +19,22 @@ jobs:
         with:
           path: collections/ansible_collections/kewlfft/aur
 
-      - name: Ensure that `version:` in `galaxy.yml` matches `GITHUB_REF`
+      - name: Verify version in galaxy.yml matches release tag
         id: version
         run: |
-          [ "$(cat galaxy.yml | grep version: | awk '{print $2}')" = $(awk -F '/' '{print substr($3, 2)}' <<< ${GITHUB_REF}) ] || exit 1
-          echo "version=$(awk -F '/' '{print substr($3, 2)}' <<< ${GITHUB_REF})" >> $GITHUB_OUTPUT
+          tag_version="${GITHUB_REF##*/}"   # strip refs/tags/
+          file_version=$(awk '/^version:/ {print $2}' galaxy.yml)
 
-      - name: Deploy collection
-        run: |
-          ansible-galaxy collection build
-          ansible-galaxy collection publish --api-key ${{ secrets.ANSIBLE_GALAXY_API_KEY }} "./kewlfft-aur-${{ steps.version.outputs.version }}.tar.gz"
+          if [ "$file_version" != "$tag_version" ]; then
+            echo "❌ galaxy.yml version ($file_version) does not match tag ($tag_version)"
+            exit 1
+          fi
+
+          echo "version=$tag_version" >> "$GITHUB_OUTPUT"
+
+      - name: Build collection
+        run: ansible-galaxy collection build
+
+      - name: Publish collection
+        run: ansible-galaxy collection publish "kewlfft-aur-${{ steps.version.outputs.version }}.tar.gz" \
+              --api-key "${{ secrets.ANSIBLE_GALAXY_API_KEY }}"
