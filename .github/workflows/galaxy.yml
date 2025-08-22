@@ -18,15 +18,20 @@ jobs:
         with:
           path: collections/ansible_collections/kewlfft/aur
 
+      - name: Debug workflow version
+        run: echo "=== RUNNING UPDATED WORKFLOW ==="
+
       - name: Verify version in galaxy.yml matches release tag
         run: |
-          tag_version="${GITHUB_REF##*/}"   # strip refs/tags/
+          tag_version="${GITHUB_REF##*/}"   # e.g., v0.12.2
+          tag_version="${tag_version#v}"    # strip leading 'v' if present
           file_version=$(awk '/^version:/ {print $2}' galaxy.yml)
 
-          if [ "$file_version" != "$tag_version" ]; then
-            echo "❌ galaxy.yml version ($file_version) does not match tag ($tag_version)"
-            exit 1
+          if [ "${GITHUB_EVENT_NAME}" != "workflow_dispatch" ] && [ "$file_version" != "$tag_version" ]; then
+              echo "❌ galaxy.yml version ($file_version) does not match tag ($tag_version)"
+              exit 1
           fi
+          echo "✅ Version check passed: $file_version"
 
       - name: Build collection
         run: |
@@ -47,6 +52,7 @@ jobs:
           ls -l "$(dirname "$TARBALL")"
 
       - name: Publish collection
+        if: github.event_name != 'workflow_dispatch'  # skip publish for manual testing
         run: |
           echo "📤 Publishing $TARBALL ..."
           ansible-galaxy collection publish "$TARBALL" \
