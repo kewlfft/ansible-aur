@@ -114,7 +114,7 @@ EXAMPLES = '''
   become_user: aur_builder
 '''
 
-def_lang = ['env', 'LC_ALL=C', 'LANGUAGE=C']
+env = ['env']
 
 use_cmd = {
     'yay': ['yay', '-S', '--noconfirm', '--needed', '--cleanafter'],
@@ -200,9 +200,9 @@ def build_command_prefix(use, extra_args, skip_pgp_check=False, ignore_arch=Fals
     Create the prefix of a command that can be used by the install and upgrade functions.
     """
     if local_pkgbuild:
-        command = def_lang + use_cmd_local_pkgbuild[use]
+        command = env + use_cmd_local_pkgbuild[use]
     else:
-        command = def_lang + use_cmd[use]
+        command = env + use_cmd[use]
     if skip_pgp_check:
         command.append('--skippgpcheck')
     if ignore_arch:
