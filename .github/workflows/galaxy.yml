@@ -52,7 +52,6 @@ jobs:
           ls -l "$(dirname "$TARBALL")"
 
       - name: Publish collection
-        if: github.event_name != 'workflow_dispatch'  # skip publish for manual testing
         run: |
           echo "📤 Publishing $TARBALL ..."
           ansible-galaxy collection publish "$TARBALL" \
