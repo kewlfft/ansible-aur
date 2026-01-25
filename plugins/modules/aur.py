@@ -155,7 +155,9 @@ def check_packages(module, packages):
     """
     Inform the user what would change if the module were run
     """
-    would_be_changed = [package for package in packages if not package_installed(module, package)]
+    rc, stdout, stderr = module.run_command(['pacman', '-T'] + packages, check_rc=False)
+    missing = set(stdout.splitlines())
+    would_be_changed = [package for package in packages if package in missing]
     diff = {'before': '', 'after': '\n'.join(package for package in would_be_changed if module._diff)}
 
     if would_be_changed:
@@ -166,10 +168,7 @@ def check_packages(module, packages):
             message = 'package would be installed'
     else:
         status = False
-        if len(packages) > 1:
-            message = 'all packages are already installed'
-        else:
-            message = 'package is already installed'
+        message = 'all packages are already installed' if len(packages) > 1 else 'package is already installed'
     module.exit_json(changed=status, msg=message, diff=diff)
 
 
@@ -177,7 +176,9 @@ def check_packages_absent(module, packages):
     """
     Inform the user what would change if the module were run with state=absent
     """
-    would_be_changed = [package for package in packages if package_installed(module, package)]
+    rc, stdout, stderr = module.run_command(['pacman', '-T'] + packages, check_rc=False)
+    missing = set(stdout.splitlines())
+    would_be_changed = [package for package in packages if package not in missing]
     diff = {'before': '\n'.join(pkg for pkg in would_be_changed if module._diff), 'after': ''}
 
     if would_be_changed:
@@ -188,10 +189,7 @@ def check_packages_absent(module, packages):
             message = 'package would be removed'
     else:
         status = False
-        if len(packages) > 1:
-            message = 'all packages are already absent'
-        else:
-            message = 'package is already absent'
+        message = 'all packages are already absent' if len(packages) > 1 else 'package is already absent'
     module.exit_json(changed=status, msg=message, diff=diff)
 
 
@@ -298,6 +296,9 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
     installed_pkgs = []
     updated_pkgs = []
 
+    if use != 'makepkg' and not local_pkgbuild:
+        base_command = build_command_prefix(use, extra_args, aur_only=aur_only, update_cache=update_cache)
+
     for package in packages:
         was_installed = package_installed(module, package)
         if state == 'present' and was_installed:
@@ -308,8 +309,7 @@ def install_packages(module, packages, use, extra_args, state, skip_pgp_check, i
         elif local_pkgbuild:
             rc, out, err = install_local_package(module, package, use, extra_args, local_pkgbuild)
         else:
-            command = build_command_prefix(use, extra_args, aur_only=aur_only, update_cache=update_cache)
-            command.append(package)
+            command = base_command + [package]
             rc, out, err = module.run_command(command, check_rc=True)
 
         changed_pkg = not (out == '' or 'up-to-date -- skipping' in out or 'nothing to do' in out.lower())
@@ -350,14 +350,15 @@ def remove_packages(module, packages, use, extra_args):
     rc = 0
     used_helper = use
 
+    base_cmd, helper = base_remove_cmd(use)
+    used_helper = helper
+    if extra_args:
+        base_cmd += shlex.split(extra_args)
+
     for package in packages:
         if not package_installed(module, package):
             continue
-        command, helper = base_remove_cmd(use)
-        used_helper = helper
-        if extra_args:
-            command += shlex.split(extra_args)
-        command.append(package)
+        command = base_cmd + [package]
         rc, out, err = module.run_command(command, check_rc=True)
         changed_iter |= (rc == 0)
 
