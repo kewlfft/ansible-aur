@@ -1,2 +1,4 @@
 kewlfft-aur-*.tar.gz
 *.swp
+*.log
+job_logs.txt
