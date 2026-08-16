@@ -257,7 +257,11 @@ def check_upgrade(module, use):
     """
     Inform user how many packages would be upgraded
     """
-    rc, stdout, stderr = module.run_command([use, '-Qu'], check_rc=True)
+    rc, stdout, stderr = module.run_command([use, '-Qu'], check_rc=False)
+    # -Qu exits 1 to report that nothing needs upgrading, which is not an error
+    if rc > 1:
+        module.fail_json(msg=f"Failed to query upgradable packages: {stderr.strip()}",
+                         rc=rc, stdout=stdout, stderr=stderr)
     num_packages = sum(1 for line in stdout.splitlines() if line.strip())
     module.exit_json(
         changed=num_packages > 0,
