@@ -231,7 +231,7 @@ def install_with_makepkg(module, package, extra_args, skip_pgp_check, ignore_arc
     with tempfile.TemporaryDirectory() as tmpdir:
         if local_pkgbuild:
             shutil.copytree(local_pkgbuild, tmpdir, dirs_exist_ok=True)
-            command = build_command_prefix('makepkg', extra_args)
+            command = build_command_prefix('makepkg', extra_args, skip_pgp_check=skip_pgp_check, ignore_arch=ignore_arch)
             rc, out, err = module.run_command(command, cwd=tmpdir, check_rc=True)
         else:
             tar = tarfile.open(mode='r|*', fileobj=f)
